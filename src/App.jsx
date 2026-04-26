@@ -391,7 +391,28 @@ function HomePage({
                 Crear cuenta
               </button>
               <button
-                onClick={() => setPage("publish")}
+               onClick={() => {
+  if (!acceptedLegal) {
+    alert("Debes aceptar la política de privacidad");
+    return;
+  }
+
+  if (!email || !password) {
+    alert("Rellena los campos obligatorios");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Las contraseñas no coinciden");
+    return;
+  }
+
+  if (selectedUserType === "investor") {
+    saveInvestorProfile(formProfile);
+  } else {
+    setPage("publish");
+  }
+}} 
                 className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
               >
                 Publicar inmueble
