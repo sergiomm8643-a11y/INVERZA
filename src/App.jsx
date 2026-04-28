@@ -86,6 +86,16 @@ const initialMessages = [
 
 export default function App() {
   const [page, setPage] = useState("home");
+  function handleRegister() {
+  if (selectedUserType === "investor") {
+    saveInvestorProfile({
+      name: "Test",
+      email: "test@test.com"
+    });
+  } else {
+    setPage("publish");
+  }
+}
   const [selectedId, setSelectedId] = useState(1);
   const [favorites, setFavorites] = useState([1]);
   const [messages, setMessages] = useState(initialMessages);
@@ -1202,12 +1212,19 @@ function RegisterPage({
                 selectedUserType === "investor" &&
                 saveInvestorProfile(formProfile)
               }
-              className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-emerald-600"
-            >
-              Crear cuenta
-            </button>
-            <button className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">
-              Ya tengo cuenta
+             <button
+  onClick={() => {
+    if (selectedUserType === "investor") {
+      saveInvestorProfile(formProfile);
+    } else {
+      setPage("publish");
+    }
+  }}
+  className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-emerald-600"
+>
+  Crear cuenta
+</button>
+            Ya tengo cuenta
             </button>
           </div>
         </Panel>
