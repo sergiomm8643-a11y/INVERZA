@@ -1206,27 +1206,27 @@ function RegisterPage({
               : "Como inversor o comprador podrás guardar oportunidades, contactar con anunciantes, recibir alertas y seguir operaciones desde favoritos y chat."}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            <button
-              onClick={() =>
-                selectedUserType === "investor" &&
-                saveInvestorProfile(formProfile)
-              }
-             <button
-  onClick={() => {
-    if (selectedUserType === "investor") {
-      saveInvestorProfile(formProfile);
-    } else {
-      setPage("publish");
-    }
-  }}
-  className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-emerald-600"
->
-  Crear cuenta
-</button>
-            Ya tengo cuenta
-            </button>
-          </div>
+         <div className="mt-5 flex flex-wrap gap-3">
+  <button
+    onClick={() => {
+      if (selectedUserType === "investor") {
+        saveInvestorProfile(formProfile);
+      } else {
+        setPage("publish");
+      }
+    }}
+    className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-emerald-600"
+  >
+    Crear cuenta
+  </button>
+
+  <button
+    onClick={() => alert("Aquí irá el inicio de sesión cuando creemos el login real.")}
+    className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
+  >
+    Ya tengo cuenta
+  </button>
+</div>
         </Panel>
       </div>
     </div>
