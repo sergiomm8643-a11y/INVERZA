@@ -257,10 +257,11 @@ export default function App() {
 
         {page === "register" && (
           <RegisterPage
-            selectedUserType={selectedUserType}
-            setSelectedUserType={setSelectedUserType}
-            saveInvestorProfile={saveInvestorProfile}
-          />
+  selectedUserType={selectedUserType}
+  setSelectedUserType={setSelectedUserType}
+  saveInvestorProfile={saveInvestorProfile}
+  setPage={setPage}
+/>
         )}
 
         {page === "panel" && (
@@ -1025,11 +1026,7 @@ function PublishPage() {
   );
 }
 
-function RegisterPage({
-  selectedUserType,
-  setSelectedUserType,
-  saveInvestorProfile,
-}) {
+function RegisterPage({ selectedUserType, setSelectedUserType, saveInvestorProfile, setPage }) {
   const [formProfile, setFormProfile] = useState({
     budget: 250000,
     roi: 15,
