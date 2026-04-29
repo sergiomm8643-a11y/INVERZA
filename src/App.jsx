@@ -401,33 +401,12 @@ function HomePage({
               >
                 Crear cuenta
               </button>
-              <button
-               onClick={() => {
-  if (!acceptedLegal) {
-    alert("Debes aceptar la política de privacidad");
-    return;
-  }
-
-  if (!email || !password) {
-    alert("Rellena los campos obligatorios");
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    alert("Las contraseñas no coinciden");
-    return;
-  }
-
-  if (selectedUserType === "investor") {
-    saveInvestorProfile(formProfile);
-  } else {
-    setPage("publish");
-  }
-}} 
-                className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
-              >
-                Publicar inmueble
-              </button>
+             <button
+  onClick={() => setPage("publish")}
+  className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
+>
+  Publicar inmueble
+</button>
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -1027,13 +1006,52 @@ function PublishPage() {
 }
 
 function RegisterPage({ selectedUserType, setSelectedUserType, saveInvestorProfile, setPage }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
+  const [error, setError] = useState("");
+
   const [formProfile, setFormProfile] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    province: "Valencia",
+    advertiserType: "Particular",
     budget: 250000,
     roi: 15,
     strategy: "Flip",
     zones: "Valencia",
     risk: "Medio",
   });
+
+  function createAccount() {
+    if (!acceptedLegal) {
+      setError("Debes aceptar la política de privacidad y condiciones de uso.");
+      return;
+    }
+
+    if (!formProfile.email || !formProfile.password) {
+      setError("Introduce correo electrónico y contraseña.");
+      return;
+    }
+
+    if (formProfile.password !== formProfile.confirmPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+
+    setError("");
+
+    if (selectedUserType === "investor") {
+      saveInvestorProfile(formProfile);
+    } else {
+      localStorage.setItem("sellerProfile", JSON.stringify(formProfile));
+      setPage("publish");
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="rounded-[30px] border border-slate-200 bg-gradient-to-br from-white via-emerald-50/40 to-sky-50 p-8 shadow-sm">
@@ -1044,8 +1062,7 @@ function RegisterPage({ selectedUserType, setSelectedUserType, saveInvestorProfi
           Crea tu cuenta según tu perfil
         </h1>
         <p className="mt-3 max-w-3xl text-lg leading-8 text-slate-600">
-          Puedes registrarte para publicar inmuebles o para entrar como inversor
-          y acceder a oportunidades, favoritos, mensajes y alertas.
+          Regístrate como propietario/anunciante o como inversor/comprador.
         </p>
       </div>
 
@@ -1064,166 +1081,81 @@ function RegisterPage({ selectedUserType, setSelectedUserType, saveInvestorProfi
                       : "border-slate-200 bg-slate-50 hover:border-emerald-200 hover:bg-emerald-50/60"
                   }`}
                 >
-                  <div className="text-lg font-bold text-slate-900">
-                    {item.title}
-                  </div>
-                  <div className="mt-2 text-sm leading-6 text-slate-600">
-                    {item.desc}
-                  </div>
+                  <div className="text-lg font-bold text-slate-900">{item.title}</div>
+                  <div className="mt-2 text-sm leading-6 text-slate-600">{item.desc}</div>
                 </button>
               );
             })}
           </div>
         </Panel>
 
-        <Panel
-          title={
-            selectedUserType === "seller"
-              ? "Registro de propietario / anunciante"
-              : "Registro de inversor / comprador"
-          }
-        >
+        <Panel title={selectedUserType === "seller" ? "Registro de propietario / anunciante" : "Registro de inversor / comprador"}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Field label="Nombre" placeholder="Tu nombre" />
-            <Field label="Apellidos" placeholder="Tus apellidos" />
-            <Field
-              label="Correo electrónico"
-              placeholder="correo@ejemplo.com"
-            />
-            <Field label="Teléfono" placeholder="600 000 000" />
-            <Field label="Contraseña" placeholder="••••••••" />
-            <Field label="Confirmar contraseña" placeholder="••••••••" />
+            <Field label="Nombre" placeholder="Tu nombre" onChange={(e) => setFormProfile(p => ({ ...p, name: e.target.value }))} />
+            <Field label="Apellidos" placeholder="Tus apellidos" onChange={(e) => setFormProfile(p => ({ ...p, surname: e.target.value }))} />
+            <Field label="Correo electrónico" placeholder="correo@ejemplo.com" onChange={(e) => setFormProfile(p => ({ ...p, email: e.target.value }))} />
+            <Field label="Teléfono" placeholder="600 000 000" onChange={(e) => setFormProfile(p => ({ ...p, phone: e.target.value }))} />
+
+            <PasswordField label="Contraseña" showPassword={showPassword} setShowPassword={setShowPassword} onChange={(e) => setFormProfile(p => ({ ...p, password: e.target.value }))} />
+            <PasswordField label="Confirmar contraseña" showPassword={showPassword} setShowPassword={setShowPassword} onChange={(e) => setFormProfile(p => ({ ...p, confirmPassword: e.target.value }))} />
+
+            <ProvinceSelect value={formProfile.province} onChange={(e) => setFormProfile(p => ({ ...p, province: e.target.value }))} />
+
             {selectedUserType === "seller" ? (
-              <>
-                <Field
-                  label="Tipo de anunciante"
-                  placeholder="Particular, agencia, promotor..."
-                />
-                <Field label="Provincia principal" placeholder="Valencia" />
-              </>
+              <div>
+                <label>Tipo de anunciante</label>
+                <select onChange={(e) => setFormProfile(p => ({ ...p, advertiserType: e.target.value }))}>
+                  <option>Particular</option>
+                  <option>Agencia inmobiliaria</option>
+                  <option>Promotor</option>
+                  <option>Constructor</option>
+                  <option>Empresa patrimonial</option>
+                </select>
+              </div>
             ) : (
               <>
-                <Field
-                  label="Perfil inversor"
-                  placeholder="Flip, alquiler, promoción..."
-                />
-                <Field label="Ticket habitual" placeholder="150.000 €" />
-
-                {/* Cuestionario inversor */}
-                <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4">
-                  <div className="text-sm font-bold text-emerald-700">
-                    Configuración de inversión
-                  </div>
-
-                  <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Field
-                      label="Presupuesto máximo"
-                      placeholder="250.000 €"
-                      onChange={(e) =>
-                        setFormProfile((p) => ({
-                          ...p,
-                          budget: e.target.value,
-                        }))
-                      }
-                    />
-                    <Field
-                      label="ROI objetivo"
-                      placeholder="20%"
-                      onChange={(e) =>
-                        setFormProfile((p) => ({ ...p, roi: e.target.value }))
-                      }
-                    />
-
-                    <div>
-                      <label className="mb-2 block text-sm text-slate-600">
-                        Estrategia
-                      </label>
-                      <select
-                        onChange={(e) =>
-                          setFormProfile((p) => ({
-                            ...p,
-                            strategy: e.target.value,
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3"
-                      >
-                        <option>Flip</option>
-                        <option>Alquiler</option>
-                        <option>Promoción</option>
-                        <option>Mixto</option>
-                      </select>
-                    </div>
-
-                    <Field
-                      label="Zonas de interés"
-                      placeholder="Valencia, Alicante, costa..."
-                      onChange={(e) =>
-                        setFormProfile((p) => ({ ...p, zones: e.target.value }))
-                      }
-                    />
-
-                    <div>
-                      <label className="mb-2 block text-sm text-slate-600">
-                        Horizonte de inversión
-                      </label>
-                      <select className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                        <option>Corto plazo (0-12 meses)</option>
-                        <option>Medio plazo (1-3 años)</option>
-                        <option>Largo plazo (+3 años)</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-sm text-slate-600">
-                        Nivel de riesgo
-                      </label>
-                      <select
-                        onChange={(e) =>
-                          setFormProfile((p) => ({
-                            ...p,
-                            risk: e.target.value,
-                          }))
-                        }
-                        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3"
-                      >
-                        <option>Bajo</option>
-                        <option selected>Medio</option>
-                        <option>Alto</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                <Field label="Presupuesto máximo" placeholder="250000" onChange={(e) => setFormProfile(p => ({ ...p, budget: e.target.value }))} />
+                <Field label="ROI objetivo" placeholder="20" onChange={(e) => setFormProfile(p => ({ ...p, roi: e.target.value }))} />
+                <Field label="Zonas de interés" placeholder="Valencia, Alicante..." onChange={(e) => setFormProfile(p => ({ ...p, zones: e.target.value }))} />
               </>
             )}
           </div>
 
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-            {selectedUserType === "seller"
-              ? "Como anunciante podrás publicar inmuebles, gestionar tus anuncios, recibir contactos y abrir la operación a venta, alquiler, inversor o permuta."
-              : "Como inversor o comprador podrás guardar oportunidades, contactar con anunciantes, recibir alertas y seguir operaciones desde favoritos y chat."}
+          <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-slate-700">
+            <label style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+              <input
+                type="checkbox"
+                checked={acceptedLegal}
+                onChange={(e) => setAcceptedLegal(e.target.checked)}
+                style={{ width: "18px", marginTop: "3px" }}
+              />
+              <span>
+                Acepto la política de privacidad, condiciones de uso y el tratamiento de mis datos conforme a la normativa de protección de datos.
+              </span>
+            </label>
           </div>
 
-         <div className="mt-5 flex flex-wrap gap-3">
-  <button
-    onClick={() => {
-      if (selectedUserType === "investor") {
-        saveInvestorProfile(formProfile);
-      } else {
-        setPage("publish");
-      }
-    }}
-    className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-emerald-600"
-  >
-    Crear cuenta
-  </button>
+          {error && (
+            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
+              {error}
+            </div>
+          )}
 
-  <button
-    onClick={() => alert("Aquí irá el inicio de sesión cuando creemos el login real.")}
-    className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
-  >
-    Ya tengo cuenta
-  </button>
-</div>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              onClick={createAccount}
+              className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-sm transition hover:bg-emerald-600"
+            >
+              Crear cuenta
+            </button>
+
+            <button
+              onClick={() => alert("Aquí irá el inicio de sesión real.")}
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
+            >
+              Ya tengo cuenta
+            </button>
+          </div>
         </Panel>
       </div>
     </div>
@@ -1424,14 +1356,79 @@ function SearchField({ label, children }) {
   );
 }
 
-function Field({ label, placeholder }) {
+function Field({ label, placeholder, onChange, type = "text" }) {
   return (
     <div>
       <label className="mb-2 block text-sm text-slate-600">{label}</label>
       <input
+        type={type}
+        onChange={onChange}
         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none"
         placeholder={placeholder}
       />
+    </div>
+  );
+}
+
+function PasswordField({ label, showPassword, setShowPassword, onChange }) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm text-slate-600">{label}</label>
+      <div style={{ position: "relative" }}>
+        <input
+          type={showPassword ? "text" : "password"}
+          onChange={onChange}
+          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none"
+          placeholder="••••••••"
+          style={{ paddingRight: "55px" }}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            position: "absolute",
+            right: "12px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "transparent",
+            border: 0,
+            fontSize: "18px",
+          }}
+        >
+          {showPassword ? "🙈" : "👁️"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ProvinceSelect({ value, onChange }) {
+  const provinces = [
+    "A Coruña", "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila",
+    "Badajoz", "Barcelona", "Burgos", "Cáceres", "Cádiz", "Cantabria",
+    "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Girona", "Granada",
+    "Guadalajara", "Gipuzkoa", "Huelva", "Huesca", "Illes Balears", "Jaén",
+    "La Rioja", "Las Palmas", "León", "Lleida", "Lugo", "Madrid", "Málaga",
+    "Murcia", "Navarra", "Ourense", "Palencia", "Pontevedra", "Salamanca",
+    "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona",
+    "Teruel", "Toledo", "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza"
+  ];
+
+  return (
+    <div>
+      <label className="mb-2 block text-sm text-slate-600">Provincia principal</label>
+      <input
+        list="provincias-es"
+        value={value}
+        onChange={onChange}
+        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none"
+        placeholder="Selecciona provincia"
+      />
+      <datalist id="provincias-es">
+        {provinces.map((province) => (
+          <option key={province} value={province} />
+        ))}
+      </datalist>
     </div>
   );
 }
