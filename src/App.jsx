@@ -1006,10 +1006,9 @@ function PublishPage() {
 }
 
 function RegisterPage({ selectedUserType, setSelectedUserType, saveInvestorProfile, setPage }) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [acceptedLegal, setAcceptedLegal] = useState(false);
-  const [error, setError] = useState("");
-
+const [showPassword, setShowPassword] = useState(false);
+const [acceptedLegal, setAcceptedLegal] = useState(false);
+const [error, setError] = useState("");
   const [formProfile, setFormProfile] = useState({
     name: "",
     surname: "",
