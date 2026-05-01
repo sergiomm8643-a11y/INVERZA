@@ -1068,10 +1068,15 @@ const [error, setError] = useState("");
     },
   });
 
-  if (error) {
-    setError(error.message);
-    return;
-  }
+ if (error) {
+  console.log("ERROR SUPABASE:", error);
+  alert("Error Supabase: " + error.message);
+  setError(error.message);
+  return;
+}
+
+console.log("USUARIO CREADO:", data);
+alert("Respuesta Supabase: " + JSON.stringify(data));
 
   alert("Cuenta creada. Revisa tu email para confirmar el registro.");
 
