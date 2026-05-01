@@ -1030,32 +1030,58 @@ const [error, setError] = useState("");
     risk: "Medio",
   });
 
-  function createAccount() {
-    if (!acceptedLegal) {
-      setError("Debes aceptar la política de privacidad y condiciones de uso.");
-      return;
-    }
-
-    if (!formProfile.email || !formProfile.password) {
-      setError("Introduce correo electrónico y contraseña.");
-      return;
-    }
-
-    if (formProfile.password !== formProfile.confirmPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
-
-    setError("");
-
-    if (selectedUserType === "investor") {
-      saveInvestorProfile(formProfile);
-    } else {
-      localStorage.setItem("sellerProfile", JSON.stringify(formProfile));
-      setPage("publish");
-    }
+  async function createAccount() {
+  if (!acceptedLegal) {
+    setError("Debes aceptar la política de privacidad y condiciones de uso.");
+    return;
   }
 
+  if (!formProfile.email || !formProfile.password) {
+    setError("Introduce correo electrónico y contraseña.");
+    return;
+  }
+
+  if (formProfile.password !== formProfile.confirmPassword) {
+    setError("Las contraseñas no coinciden.");
+    return;
+  }
+
+  setError("");
+
+  const { data, error } = await supabase.auth.signUp({
+    email: formProfile.email,
+    password: formProfile.password,
+    options: {
+      data: {
+        name: formProfile.name,
+        surname: formProfile.surname,
+        phone: formProfile.phone,
+        user_type: selectedUserType,
+        province: formProfile.province,
+        advertiser_type: formProfile.advertiserType,
+        budget: formProfile.budget,
+        roi: formProfile.roi,
+        strategy: formProfile.strategy,
+        zones: formProfile.zones,
+        risk: formProfile.risk,
+      },
+    },
+  });
+
+  if (error) {
+    setError(error.message);
+    return;
+  }
+
+  alert("Cuenta creada. Revisa tu email para confirmar el registro.");
+
+  if (selectedUserType === "investor") {
+    saveInvestorProfile(formProfile);
+  } else {
+    localStorage.setItem("sellerProfile", JSON.stringify(formProfile));
+    setPage("publish");
+  }
+}
   return (
     <div className="space-y-6">
       <div className="rounded-[30px] border border-slate-200 bg-gradient-to-br from-white via-emerald-50/40 to-sky-50 p-8 shadow-sm">
