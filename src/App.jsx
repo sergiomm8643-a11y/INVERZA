@@ -1188,25 +1188,8 @@ alert("Respuesta Supabase: " + JSON.stringify(data));
             </button>
 
            <button
-  onClick={async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: formProfile.email,
-      password: formProfile.password,
-    });
-
-    if (error) {
-      alert("Error login: " + error.message);
-      return;
-    }
-
-    alert("Login correcto");
-
-    if (selectedUserType === "investor") {
-      setPage("panel");
-    } else {
-      setPage("publish");
-    }
-  }}
+ <button
+  onClick={() => setPage("login")}
   className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
 >
   Ya tengo cuenta
