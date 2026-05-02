@@ -1187,7 +1187,7 @@ alert("Respuesta Supabase: " + JSON.stringify(data));
               Crear cuenta
             </button>
 
-           <button
+          
  <button
   onClick={() => setPage("login")}
   className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
