@@ -293,6 +293,9 @@ export default function App() {
             sendMessage={sendMessage}
           />
         )}
+        {page === "login" && (
+  <LoginPage setPage={setPage} />
+)}
       </main>
 
       <MobileNav page={page} setPage={setPage} />
@@ -338,7 +341,7 @@ function Header({ page, setPage }) {
             </button>
           ))}
           <button
-            onClick={() => setPage("register")}
+           onClick={() => setPage("login")}
             className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
           >
             Acceder
@@ -1518,7 +1521,63 @@ function EmptyCard({ text }) {
     </div>
   );
 }
+function LoginPage({ setPage }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
+  async function handleLogin() {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert("Error: " + error.message);
+      return;
+    }
+
+    alert("Bienvenido");
+
+    setPage("panel");
+  }
+
+  return (
+    <div className="max-w-md mx-auto mt-10 space-y-4">
+      <h1 className="text-3xl font-black text-slate-900">
+        Iniciar sesión
+      </h1>
+
+      <input
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full rounded-2xl border p-3"
+      />
+
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full rounded-2xl border p-3"
+      />
+
+      <button
+        onClick={handleLogin}
+        className="w-full rounded-2xl bg-emerald-500 p-3 font-bold text-white"
+      >
+        Iniciar sesión
+      </button>
+
+      <button
+        onClick={() => setPage("register")}
+        className="text-sm text-emerald-600"
+      >
+        Crear cuenta nueva
+      </button>
+    </div>
+  );
+}
 function MobileNav({ page, setPage }) {
   const items = [
     ["home", "Inicio"],
