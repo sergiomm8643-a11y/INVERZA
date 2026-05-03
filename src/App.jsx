@@ -304,6 +304,9 @@ export default function App() {
             sendMessage={sendMessage}
           />
         )}
+       {page === "profile" && (
+  <ProfilePage setPage={setPage} />
+)} 
         {page === "login" && (
   <LoginPage setPage={setPage} />
 )}
@@ -352,11 +355,11 @@ function Header({ page, setPage }) {
             </button>
           ))}
           <button
-           onClick={() => setPage("login")}
-            className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
-          >
-            Acceder
-          </button>
+  onClick={() => setPage("profile")}
+  className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
+>
+  Mi cuenta
+</button>
         </nav>
       </div>
     </header>
@@ -1568,6 +1571,66 @@ function LoginPage({ setPage }) {
         className="text-sm text-emerald-600"
       >
         Crear cuenta nueva
+      </button>
+    </div>
+  );
+}
+function ProfilePage({ setPage }) {
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    setPage("home");
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      <h1 className="text-4xl font-black text-slate-900">
+        Mi cuenta
+      </h1>
+
+      <div className="grid md:grid-cols-2 gap-6">
+
+        <div className="rounded-2xl border p-5">
+          <h2 className="text-xl font-bold">Mi perfil</h2>
+          <p className="text-slate-500 mt-2">
+            Edita tus datos personales
+          </p>
+
+          <button
+            onClick={() => alert("Aquí irá edición de perfil")}
+            className="mt-4 rounded-xl bg-emerald-500 px-4 py-2 text-white"
+          >
+            Editar perfil
+          </button>
+        </div>
+
+        <div className="rounded-2xl border p-5">
+          <h2 className="text-xl font-bold">Mis anuncios</h2>
+          <p className="text-slate-500 mt-2">
+            Gestiona tus inmuebles publicados
+          </p>
+        </div>
+
+        <div className="rounded-2xl border p-5">
+          <h2 className="text-xl font-bold">Favoritos</h2>
+          <p className="text-slate-500 mt-2">
+            Tus oportunidades guardadas
+          </p>
+        </div>
+
+        <div className="rounded-2xl border p-5">
+          <h2 className="text-xl font-bold">Ajustes</h2>
+          <p className="text-slate-500 mt-2">
+            Preferencias y notificaciones
+          </p>
+        </div>
+
+      </div>
+
+      <button
+        onClick={handleLogout}
+        className="rounded-2xl bg-red-500 px-5 py-3 text-white font-bold"
+      >
+        Cerrar sesión
       </button>
     </div>
   );
