@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -91,6 +91,17 @@ const initialMessages = [
 
 export default function App() {
   const [page, setPage] = useState("home");
+  useEffect(() => {
+  const checkUser = async () => {
+    const { data } = await supabase.auth.getSession();
+
+    if (data.session) {
+      setPage("panel");
+    }
+  };
+
+  checkUser();
+}, []);
   function handleRegister() {
   if (selectedUserType === "investor") {
     saveInvestorProfile({
