@@ -307,6 +307,9 @@ export default function App() {
        {page === "profile" && (
   <ProfilePage setPage={setPage} />
 )} 
+       {page === "editProfile" && (
+  <EditProfilePage setPage={setPage} />
+)} 
         {page === "login" && (
   <LoginPage setPage={setPage} />
 )}
@@ -1575,6 +1578,86 @@ function LoginPage({ setPage }) {
     </div>
   );
 }
+function EditProfilePage({ setPage }) {
+  const [profile, setProfile] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    phone: "",
+    province: "Valencia",
+    userType: "Propietario / anunciante",
+  });
+
+  async function saveProfile() {
+    localStorage.setItem("userProfile", JSON.stringify(profile));
+    alert("Perfil guardado correctamente");
+    setPage("profile");
+  }
+
+  async function changePassword() {
+    if (!profile.email) {
+      alert("Introduce tu email para enviarte el cambio de contraseña");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(profile.email, {
+      redirectTo: "https://getinverza.com",
+    });
+
+    if (error) {
+      alert("Error: " + error.message);
+      return;
+    }
+
+    alert("Te hemos enviado un email para cambiar la contraseña");
+  }
+
+  return (
+    <div className="space-y-6">
+      <button
+        onClick={() => setPage("profile")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver a mi cuenta
+      </button>
+
+      <Panel title="Editar perfil">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Field label="Nombre" placeholder="Tu nombre" onChange={(e) => setProfile(p => ({ ...p, name: e.target.value }))} />
+          <Field label="Apellidos" placeholder="Tus apellidos" onChange={(e) => setProfile(p => ({ ...p, surname: e.target.value }))} />
+          <Field label="Email" placeholder="correo@ejemplo.com" onChange={(e) => setProfile(p => ({ ...p, email: e.target.value }))} />
+          <Field label="Teléfono" placeholder="600 000 000" onChange={(e) => setProfile(p => ({ ...p, phone: e.target.value }))} />
+          <ProvinceSelect value={profile.province} onChange={(e) => setProfile(p => ({ ...p, province: e.target.value }))} />
+
+          <div>
+            <label>Tipo de usuario</label>
+            <select onChange={(e) => setProfile(p => ({ ...p, userType: e.target.value }))}>
+              <option>Propietario / anunciante</option>
+              <option>Inversor / comprador</option>
+              <option>Profesional inmobiliario</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            onClick={saveProfile}
+            className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white"
+          >
+            Guardar perfil
+          </button>
+
+          <button
+            onClick={changePassword}
+            className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700"
+          >
+            Cambiar contraseña
+          </button>
+        </div>
+      </Panel>
+    </div>
+  );
+}
 function ProfilePage({ setPage }) {
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -1596,11 +1679,11 @@ function ProfilePage({ setPage }) {
           </p>
 
           <button
-            onClick={() => alert("Aquí irá edición de perfil")}
-            className="mt-4 rounded-xl bg-emerald-500 px-4 py-2 text-white"
-          >
-            Editar perfil
-          </button>
+  onClick={() => setPage("editProfile")}
+  className="mt-4 rounded-xl bg-emerald-500 px-4 py-2 text-white"
+>
+  Editar perfil
+</button>
         </div>
 
         <div className="rounded-2xl border p-5">
