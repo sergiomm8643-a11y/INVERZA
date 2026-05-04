@@ -977,6 +977,14 @@ function ListingPage({ listing, isFavorite, toggleFavorite }) {
 }
 
 function PublishPage() {
+  const [newListing, setNewListing] = useState({
+  title: "",
+  location: "",
+  price: "",
+  type: "",
+  operation: "",
+  status: "Activo",
+});
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-black text-slate-900">Publicar inmueble</h1>
@@ -984,16 +992,30 @@ function PublishPage() {
       <Panel title="Datos básicos">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Field
-            label="Tipo de inmueble"
-            placeholder="Vivienda, terreno, edificio..."
-          />
+  label="Tipo de inmueble"
+  placeholder="Vivienda, terreno, edificio..."
+  onChange={(e) => setNewListing((p) => ({ ...p, type: e.target.value }))}
+/>
           <Field
-            label="Operación"
-            placeholder="Venta, alquiler, inversor, permuta"
-          />
-          <Field label="Provincia" placeholder="Valencia" />
-          <Field label="Municipio" placeholder="Valencia" />
-          <Field label="Zona / ubicación" placeholder="Ruzafa" />
+  label="Operación"
+  placeholder="Venta, alquiler, inversor, permuta"
+  onChange={(e) => setNewListing((p) => ({ ...p, operation: e.target.value }))}
+/>
+         <Field
+  label="Provincia"
+  placeholder="Valencia"
+  onChange={(e) => setNewListing((p) => ({ ...p, location: e.target.value }))}
+/> 
+          <Field
+  label="Municipio"
+  placeholder="Valencia"
+  onChange={(e) => setNewListing((p) => ({ ...p, location: e.target.value }))}
+/>
+          <Field
+  label="Zona / ubicación"
+  placeholder="Ruzafa"
+  onChange={(e) => setNewListing((p) => ({ ...p, location: e.target.value }))}
+/>
           <Field label="M2 vivienda" placeholder="85" />
           <Field label="M2 parcela" placeholder="120" />
           <Field label="Unidades" placeholder="1" />
@@ -1002,7 +1024,11 @@ function PublishPage() {
 
       <Panel title="Precio y condiciones">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Field label="Precio" placeholder="120.000 €" />
+          <Field
+  label="Precio"
+  placeholder="120.000 €"
+  onChange={(e) => setNewListing((p) => ({ ...p, price: e.target.value }))}
+/>
           <Field label="Estado legal" placeholder="Libre" />
           <Field label="Cargas" placeholder="Ninguna" />
           <Field
@@ -1027,9 +1053,25 @@ function PublishPage() {
         </div>
       </Panel>
 
-      <button className="w-full rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-sm">
-        Publicar inmueble
-      </button>
+      <button
+  onClick={() => {
+    const saved = localStorage.getItem("myListings");
+    const current = saved ? JSON.parse(saved) : [];
+
+    const listingToSave = {
+      ...newListing,
+      title: newListing.title || `${newListing.type || "Inmueble"} en ${newListing.location || "ubicación pendiente"}`,
+      id: Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem("myListings", JSON.stringify([listingToSave, ...current]));
+    alert("Inmueble publicado correctamente");
+  }}
+  className="w-full rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-sm"
+>
+  Publicar inmueble
+</button>
     </div>
   );
 }
