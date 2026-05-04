@@ -304,11 +304,15 @@ export default function App() {
             sendMessage={sendMessage}
           />
         )}
+      
        {page === "profile" && (
   <ProfilePage setPage={setPage} />
 )} 
        {page === "editProfile" && (
   <EditProfilePage setPage={setPage} />
+)} 
+       {page === "myListings" && (
+  <MyListingsPage setPage={setPage} />
 )} 
         {page === "login" && (
   <LoginPage setPage={setPage} />
@@ -1691,6 +1695,12 @@ function ProfilePage({ setPage }) {
           <p className="text-slate-500 mt-2">
             Gestiona tus inmuebles publicados
           </p>
+          <button
+  onClick={() => setPage("myListings")}
+  className="mt-4 rounded-xl bg-emerald-500 px-4 py-2 text-white"
+>
+  Ver mis anuncios
+</button>
         </div>
 
         <div className="rounded-2xl border p-5">
@@ -1715,6 +1725,70 @@ function ProfilePage({ setPage }) {
       >
         Cerrar sesión
       </button>
+    </div>
+  );
+}
+function MyListingsPage({ setPage }) {
+  const [myListings, setMyListings] = useState(() => {
+    const saved = localStorage.getItem("myListings");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  return (
+    <div className="space-y-6">
+      <button
+        onClick={() => setPage("profile")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver a mi cuenta
+      </button>
+
+      <h1 className="text-4xl font-black text-slate-900">
+        Mis anuncios
+      </h1>
+
+      <button
+        onClick={() => setPage("publish")}
+        className="rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white"
+      >
+        + Publicar nuevo inmueble
+      </button>
+
+      <div className="space-y-4">
+        {myListings.length === 0 && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-500">
+            No tienes anuncios publicados todavía.
+          </div>
+        )}
+
+        {myListings.map((item, index) => (
+          <div
+            key={index}
+            className="rounded-2xl border border-slate-200 bg-white p-5"
+          >
+            <h3 className="text-xl font-bold text-slate-900">
+              {item.title || "Inmueble"}
+            </h3>
+            <p className="text-slate-500">
+              {item.location || "Ubicación no definida"}
+            </p>
+
+            <div className="mt-3 flex gap-3">
+              <button className="rounded-xl bg-emerald-500 px-4 py-2 text-white">
+                Ver
+              </button>
+
+              <button className="rounded-xl border px-4 py-2">
+                Editar
+              </button>
+
+              <button className="rounded-xl border px-4 py-2 text-red-500">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
