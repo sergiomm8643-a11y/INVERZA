@@ -1068,6 +1068,29 @@ function PublishPage() {
     localStorage.setItem("myListings", JSON.stringify([listingToSave, ...current]));
     alert("Inmueble publicado correctamente");
   }}
+  <button
+  onClick={() => {
+    const saved = localStorage.getItem("myListings");
+    const current = saved ? JSON.parse(saved) : [];
+
+    const listingToSave = {
+      ...newListing,
+      id: Date.now(),
+      title:
+        newListing.title ||
+        `${newListing.type || "Inmueble"} en ${
+          newListing.location || "ubicación pendiente"
+        }`,
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(
+      "myListings",
+      JSON.stringify([listingToSave, ...current])
+    );
+
+    alert("Inmueble publicado correctamente");
+  }}
   className="w-full rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-sm"
 >
   Publicar inmueble
