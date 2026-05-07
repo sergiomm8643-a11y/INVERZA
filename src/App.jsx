@@ -1075,6 +1075,7 @@ function PublishPage() {
     );
 
     alert("Inmueble publicado correctamente");
+    setPage("myListings");
   }}
   className="w-full rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-sm"
 >
