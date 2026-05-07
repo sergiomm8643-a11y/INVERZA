@@ -113,6 +113,7 @@ export default function App() {
   }
 }
   const [selectedId, setSelectedId] = useState(1);
+  const [selectedMyListing, setSelectedMyListing] = useState(null);
   const [favorites, setFavorites] = useState([1]);
   const [messages, setMessages] = useState(initialMessages);
   const [chatInput, setChatInput] = useState("");
@@ -269,7 +270,7 @@ export default function App() {
           />
         )}
 
-        {page === "publish" && <PublishPage />}
+       {page === "publish" && <PublishPage setPage={setPage} />} 
 
         {page === "register" && (
           <RegisterPage
@@ -312,7 +313,16 @@ export default function App() {
   <EditProfilePage setPage={setPage} />
 )} 
        {page === "myListings" && (
-  <MyListingsPage setPage={setPage} />
+  <MyListingsPage
+    setPage={setPage}
+    setSelectedMyListing={setSelectedMyListing}
+  />
+)}
+       {page === "myListingDetail" && (
+  <MyListingDetailPage
+    listing={selectedMyListing}
+    setPage={setPage}
+  />
 )} 
         {page === "login" && (
   <LoginPage setPage={setPage} />
@@ -976,7 +986,7 @@ function ListingPage({ listing, isFavorite, toggleFavorite }) {
   );
 }
 
-function PublishPage() {
+function PublishPage({ setPage }) {
   const [newListing, setNewListing] = useState({
   title: "",
   location: "",
@@ -1779,7 +1789,7 @@ function ProfilePage({ setPage }) {
     </div>
   );
 }
-function MyListingsPage({ setPage }) {
+function MyListingsPage({ setPage, setSelectedMyListing }) {
   const [myListings, setMyListings] = useState(() => {
     const saved = localStorage.getItem("myListings");
     return saved ? JSON.parse(saved) : [];
@@ -1826,9 +1836,10 @@ function MyListingsPage({ setPage }) {
 
             <div className="mt-3 flex gap-3">
              <button
-  onClick={() => alert(
-    `${item.title || "Inmueble"}\n${item.location || "Ubicación no definida"}\n${item.price || "Precio no definido"}`
-  )}
+  onClick={() => {
+    setSelectedMyListing(item);
+    setPage("myListingDetail");
+  }}
   className="rounded-xl bg-emerald-500 px-4 py-2 text-white"
 >
   Ver
@@ -1852,6 +1863,40 @@ function MyListingsPage({ setPage }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+  function MyListingDetailPage({ listing, setPage }) {
+  if (!listing) {
+    return (
+      <div className="space-y-4">
+        <button onClick={() => setPage("myListings")}>
+          ← Volver a mis anuncios
+        </button>
+        <p>No se ha encontrado el anuncio.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <button
+        onClick={() => setPage("myListings")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver a mis anuncios
+      </button>
+
+      <Panel title={listing.title || "Detalle del anuncio"}>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <MiniMetric label="Tipo" value={listing.type || "No definido"} />
+          <MiniMetric label="Operación" value={listing.operation || "No definido"} />
+          <MiniMetric label="Ubicación" value={listing.location || "No definida"} />
+          <MiniMetric label="Precio" value={listing.price || "No definido"} />
+          <MiniMetric label="Estado" value={listing.status || "Activo"} />
+          <MiniMetric label="Publicado" value={listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : "Hoy"} />
+        </div>
+      </Panel>
     </div>
   );
 }
