@@ -1053,22 +1053,7 @@ function PublishPage() {
         </div>
       </Panel>
 
-      <button
-  onClick={() => {
-    const saved = localStorage.getItem("myListings");
-    const current = saved ? JSON.parse(saved) : [];
-
-    const listingToSave = {
-      ...newListing,
-      title: newListing.title || `${newListing.type || "Inmueble"} en ${newListing.location || "ubicación pendiente"}`,
-      id: Date.now(),
-      createdAt: new Date().toISOString(),
-    };
-
-    localStorage.setItem("myListings", JSON.stringify([listingToSave, ...current]));
-    alert("Inmueble publicado correctamente");
-  }}
-  <button
+     <button
   onClick={() => {
     const saved = localStorage.getItem("myListings");
     const current = saved ? JSON.parse(saved) : [];
