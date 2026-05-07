@@ -994,6 +994,7 @@ function PublishPage({ setPage }) {
   type: "",
   operation: "",
   status: "Activo",
+    media: [],
 });
   return (
     <div className="space-y-6">
@@ -1062,7 +1063,50 @@ function PublishPage({ setPage }) {
           )}
         </div>
       </Panel>
+<Panel title="Fotos y vídeos">
+  <input
+    type="file"
+    accept="image/*,video/*"
+    multiple
+    onChange={(e) => {
+      const files = Array.from(e.target.files || []);
+      const media = files.map((file) => ({
+        id: Date.now() + Math.random(),
+        name: file.name,
+        type: file.type.startsWith("video") ? "video" : "image",
+        url: URL.createObjectURL(file),
+      }));
 
+      setNewListing((p) => ({
+        ...p,
+        media: [...(p.media || []), ...media],
+      }));
+    }}
+  />
+
+  {newListing.media.length > 0 && (
+    <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+      {newListing.media.map((item) => (
+        <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-2">
+          {item.type === "image" ? (
+            <img
+              src={item.url}
+              alt={item.name}
+              style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "14px" }}
+            />
+          ) : (
+            <video
+              src={item.url}
+              controls
+              style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "14px" }}
+            />
+          )}
+          <div className="mt-2 text-xs text-slate-500">{item.name}</div>
+        </div>
+      ))}
+    </div>
+  )}
+</Panel>
      <button
   onClick={() => {
     const saved = localStorage.getItem("myListings");
@@ -1886,7 +1930,46 @@ function MyListingsPage({ setPage, setSelectedMyListing }) {
       >
         ← Volver a mis anuncios
       </button>
+{listing.media && listing.media.length > 0 && (
+  <Panel title="Galería">
+    <div className="grid gap-4">
+      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+        {listing.media[0].type === "image" ? (
+          <img
+            src={listing.media[0].url}
+            alt={listing.media[0].name}
+            style={{ width: "100%", maxHeight: "420px", objectFit: "cover", borderRadius: "18px" }}
+          />
+        ) : (
+          <video
+            src={listing.media[0].url}
+            controls
+            style={{ width: "100%", maxHeight: "420px", objectFit: "cover", borderRadius: "18px" }}
+          />
+        )}
+      </div>
 
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+        {listing.media.map((item) => (
+          <div key={item.id} className="rounded-xl border border-slate-200 bg-white p-2">
+            {item.type === "image" ? (
+              <img
+                src={item.url}
+                alt={item.name}
+                style={{ width: "100%", height: "80px", objectFit: "cover", borderRadius: "10px" }}
+              />
+            ) : (
+              <video
+                src={item.url}
+                style={{ width: "100%", height: "80px", objectFit: "cover", borderRadius: "10px" }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </Panel>
+)}
       <Panel title={listing.title || "Detalle del anuncio"}>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <MiniMetric label="Tipo" value={listing.type || "No definido"} />
