@@ -1825,17 +1825,29 @@ function MyListingsPage({ setPage }) {
             </p>
 
             <div className="mt-3 flex gap-3">
-              <button className="rounded-xl bg-emerald-500 px-4 py-2 text-white">
-                Ver
-              </button>
+             <button
+  onClick={() => alert(
+    `${item.title || "Inmueble"}\n${item.location || "Ubicación no definida"}\n${item.price || "Precio no definido"}`
+  )}
+  className="rounded-xl bg-emerald-500 px-4 py-2 text-white"
+>
+  Ver
+</button>
 
               <button className="rounded-xl border px-4 py-2">
                 Editar
               </button>
 
-              <button className="rounded-xl border px-4 py-2 text-red-500">
-                Eliminar
-              </button>
+              <button
+  onClick={() => {
+    const updated = myListings.filter((_, i) => i !== index);
+    setMyListings(updated);
+    localStorage.setItem("myListings", JSON.stringify(updated));
+  }}
+  className="rounded-xl border px-4 py-2 text-red-500"
+>
+  Eliminar
+</button>
             </div>
           </div>
         ))}
