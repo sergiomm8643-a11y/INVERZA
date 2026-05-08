@@ -1068,18 +1068,41 @@ function PublishPage({ setPage }) {
     type="file"
     accept="image/*,video/*"
     multiple
-    onChange={(e) => {
+    onChange={async (e) => {
       const files = Array.from(e.target.files || []);
-      const media = files.map((file) => ({
-        id: Date.now() + Math.random(),
-        name: file.name,
-        type: file.type.startsWith("video") ? "video" : "image",
-        url: URL.createObjectURL(file),
-      }));
+      const uploadedMedia = [];
+
+      for (const file of files) {
+        const filePath = `${Date.now()}-${file.name}`;
+
+        const { error } = await supabase.storage
+          .from("listing-media")
+          .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type,
+          });
+
+        if (error) {
+          alert("Error subiendo archivo: " + error.message);
+          return;
+        }
+
+        const { data } = supabase.storage
+          .from("listing-media")
+          .getPublicUrl(filePath);
+
+        uploadedMedia.push({
+          id: Date.now() + Math.random(),
+          name: file.name,
+          type: file.type.startsWith("video") ? "video" : "image",
+          url: data.publicUrl,
+        });
+      }
 
       setNewListing((p) => ({
         ...p,
-        media: [...(p.media || []), ...media],
+        media: [...(p.media || []), ...uploadedMedia],
       }));
     }}
   />
@@ -1092,13 +1115,23 @@ function PublishPage({ setPage }) {
             <img
               src={item.url}
               alt={item.name}
-              style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "14px" }}
+              style={{
+                width: "100%",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "14px",
+              }}
             />
           ) : (
             <video
               src={item.url}
               controls
-              style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "14px" }}
+              style={{
+                width: "100%",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "14px",
+              }}
             />
           )}
           <div className="mt-2 text-xs text-slate-500">{item.name}</div>
