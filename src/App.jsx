@@ -114,6 +114,7 @@ export default function App() {
 }
   const [selectedId, setSelectedId] = useState(1);
   const [selectedMyListing, setSelectedMyListing] = useState(null);
+  const [editingMyListingIndex, setEditingMyListingIndex] = useState(null);
   const [favorites, setFavorites] = useState([1]);
   const [messages, setMessages] = useState(initialMessages);
   const [chatInput, setChatInput] = useState("");
@@ -313,14 +314,22 @@ export default function App() {
   <EditProfilePage setPage={setPage} />
 )} 
        {page === "myListings" && (
-  <MyListingsPage
-    setPage={setPage}
-    setSelectedMyListing={setSelectedMyListing}
-  />
+ <MyListingsPage
+  setPage={setPage}
+  setSelectedMyListing={setSelectedMyListing}
+  setEditingMyListingIndex={setEditingMyListingIndex}
+/>
 )}
        {page === "myListingDetail" && (
   <MyListingDetailPage
     listing={selectedMyListing}
+    setPage={setPage}
+  />
+)} 
+       {page === "editMyListing" && (
+  <EditMyListingPage
+    listing={selectedMyListing}
+    listingIndex={editingMyListingIndex}
     setPage={setPage}
   />
 )} 
@@ -1866,7 +1875,7 @@ function ProfilePage({ setPage }) {
     </div>
   );
 }
-function MyListingsPage({ setPage, setSelectedMyListing }) {
+function MyListingsPage({ setPage, setSelectedMyListing, setEditingMyListingIndex }) {
   const [myListings, setMyListings] = useState(() => {
     const saved = localStorage.getItem("myListings");
     return saved ? JSON.parse(saved) : [];
@@ -1922,9 +1931,16 @@ function MyListingsPage({ setPage, setSelectedMyListing }) {
   Ver
 </button>
 
-              <button className="rounded-xl border px-4 py-2">
-                Editar
-              </button>
+              <button
+  onClick={() => {
+    setSelectedMyListing(item);
+    setEditingMyListingIndex(index);
+    setPage("editMyListing");
+  }}
+  className="rounded-xl border px-4 py-2"
+>
+  Editar
+</button>
 
               <button
   onClick={() => {
@@ -2012,6 +2028,145 @@ function MyListingsPage({ setPage, setSelectedMyListing }) {
           <MiniMetric label="Estado" value={listing.status || "Activo"} />
           <MiniMetric label="Publicado" value={listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : "Hoy"} />
         </div>
+      </Panel>
+    </div>
+  );
+}
+function EditMyListingPage({ listing, listingIndex, setPage }) {
+  const [form, setForm] = useState(
+    listing || {
+      title: "",
+      type: "",
+      operation: "",
+      location: "",
+      price: "",
+      status: "Activo",
+      media: [],
+    }
+  );
+
+  function saveChanges() {
+    const saved = localStorage.getItem("myListings");
+    const current = saved ? JSON.parse(saved) : [];
+
+    if (listingIndex === null || listingIndex === undefined) {
+      alert("No se ha encontrado el anuncio para editar.");
+      return;
+    }
+
+    current[listingIndex] = {
+      ...current[listingIndex],
+      ...form,
+      updatedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem("myListings", JSON.stringify(current));
+    alert("Anuncio actualizado correctamente");
+    setPage("myListings");
+  }
+
+  return (
+    <div className="space-y-6">
+      <button
+        onClick={() => setPage("myListings")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver a mis anuncios
+      </button>
+
+      <Panel title="Editar anuncio">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Field
+            label="Título"
+            placeholder="Título del anuncio"
+            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+          />
+
+          <Field
+            label="Tipo"
+            placeholder={form.type || "Vivienda"}
+            onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
+          />
+
+          <Field
+            label="Operación"
+            placeholder={form.operation || "Venta"}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, operation: e.target.value }))
+            }
+          />
+
+          <Field
+            label="Ubicación"
+            placeholder={form.location || "Ubicación"}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, location: e.target.value }))
+            }
+          />
+
+          <Field
+            label="Precio"
+            placeholder={form.price || "120.000 €"}
+            onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))}
+          />
+
+          <div>
+            <label>Estado</label>
+            <select
+              value={form.status || "Activo"}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, status: e.target.value }))
+              }
+            >
+              <option>Activo</option>
+              <option>Pausado</option>
+              <option>Vendido</option>
+              <option>Alquilado</option>
+            </select>
+          </div>
+        </div>
+
+        {form.media && form.media.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-xl font-bold">Fotos y vídeos actuales</h3>
+            <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+              {form.media.map((item) => (
+                <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-2">
+                  {item.type === "image" ? (
+                    <img
+                      src={item.url}
+                      alt={item.name}
+                      style={{
+                        width: "100%",
+                        height: "120px",
+                        objectFit: "cover",
+                        borderRadius: "14px",
+                      }}
+                    />
+                  ) : (
+                    <video
+                      src={item.url}
+                      controls
+                      style={{
+                        width: "100%",
+                        height: "120px",
+                        objectFit: "cover",
+                        borderRadius: "14px",
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={saveChanges}
+          className="mt-6 rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white"
+        >
+          Guardar cambios
+        </button>
       </Panel>
     </div>
   );
