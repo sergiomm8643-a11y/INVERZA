@@ -2257,64 +2257,65 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
 }
 function SettingsPage({ setPage }) {
   const [settings, setSettings] = useState({
-   useEffect(() => {
-  async function loadSettings() {
+    country: "España",
+    province: "Valencia",
+    language: "Español",
+    appearance: "Claro",
+    email_notifications: true,
+    opportunity_alerts: true,
+    chat_notifications: true,
+    privacy_visibility: "Perfil privado",
+  });
+
+  useEffect(() => {
+    async function loadSettings() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("user_settings")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      if (data) {
+        setSettings(data);
+      }
+    }
+
+    loadSettings();
+  }, []);
+
+  async function saveSettings() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from("user_settings")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-
-    if (data) {
-      setSettings(data);
+    if (!user) {
+      alert("Debes iniciar sesión");
+      return;
     }
+
+    const payload = {
+      user_id: user.id,
+      ...settings,
+    };
+
+    const { error } = await supabase
+      .from("user_settings")
+      .upsert(payload);
+
+    if (error) {
+      alert("Error guardando ajustes");
+      return;
+    }
+
+    alert("Ajustes guardados correctamente");
+    setPage("profile");
   }
-
-  loadSettings();
-}, []); 
-  country: "España",
-  province: "Valencia",
-  language: "Español",
-  appearance: "Claro",
-  email_notifications: true,
-  opportunity_alerts: true,
-  chat_notifications: true,
-  privacy_visibility: "Perfil privado",
-});
-
- async function saveSettings() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    alert("Debes iniciar sesión");
-    return;
-  }
-
-  const payload = {
-    user_id: user.id,
-    ...settings,
-  };
-
-  const { error } = await supabase
-    .from("user_settings")
-    .upsert(payload);
-
-  if (error) {
-    alert("Error guardando ajustes");
-    return;
-  }
-
-  alert("Ajustes guardados correctamente");
-  setPage("profile");
-}
 
   return (
     <div className="space-y-6">
