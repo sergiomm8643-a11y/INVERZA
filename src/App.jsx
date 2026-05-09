@@ -2382,11 +2382,11 @@ function SettingsPage({ setPage }) {
           <div>
             <label>Privacidad del perfil</label>
             <select
-              value={settings.privacy_Visibility}
+              value={settings.privacy_visibility}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  privacy_Visibility: e.target.value,
+                  privacy_visibility: e.target.value,
                 }))
               }
             >
@@ -2415,11 +2415,11 @@ function SettingsPage({ setPage }) {
           <label style={{ display: "flex", gap: "10px" }}>
             <input
               type="checkbox"
-              checked={settings.opportunity_Alerts}
+              checked={settings.opportunity_alerts}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  opportunity_Alerts: e.target.checked,
+                  opportunity_alerts: e.target.checked,
                 }))
               }
             />
@@ -2429,11 +2429,11 @@ function SettingsPage({ setPage }) {
           <label style={{ display: "flex", gap: "10px" }}>
             <input
               type="checkbox"
-              checked={settings.chat_Notifications}
+              checked={settings.chat_notifications}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  chat_Notifications: e.target.checked,
+                  chat_notifications: e.target.checked,
                 }))
               }
             />
