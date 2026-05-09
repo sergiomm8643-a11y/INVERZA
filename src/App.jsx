@@ -310,6 +310,9 @@ export default function App() {
        {page === "profile" && (
   <ProfilePage setPage={setPage} />
 )} 
+        {page === "settings" && (
+  <SettingsPage setPage={setPage} />
+)}
        {page === "editProfile" && (
   <EditProfilePage setPage={setPage} />
 )} 
@@ -1851,18 +1854,32 @@ function ProfilePage({ setPage }) {
         </div>
 
         <div className="rounded-2xl border p-5">
-          <h2 className="text-xl font-bold">Favoritos</h2>
-          <p className="text-slate-500 mt-2">
-            Tus oportunidades guardadas
-          </p>
-        </div>
+  <h2 className="text-xl font-bold">Favoritos</h2>
+  <p className="text-slate-500 mt-2">
+    Tus oportunidades guardadas
+  </p>
+
+  <button
+    onClick={() => setPage("favorites")}
+    className="mt-4 rounded-xl bg-emerald-500 px-4 py-2 text-white"
+  >
+    Ver favoritos
+  </button>
+</div>
 
         <div className="rounded-2xl border p-5">
-          <h2 className="text-xl font-bold">Ajustes</h2>
-          <p className="text-slate-500 mt-2">
-            Preferencias y notificaciones
-          </p>
-        </div>
+  <h2 className="text-xl font-bold">Ajustes</h2>
+  <p className="text-slate-500 mt-2">
+    Preferencias y notificaciones
+  </p>
+
+  <button
+    onClick={() => setPage("settings")}
+    className="mt-4 rounded-xl bg-emerald-500 px-4 py-2 text-white"
+  >
+    Abrir ajustes
+  </button>
+</div>
 
       </div>
 
@@ -2233,6 +2250,163 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
           className="mt-6 rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white"
         >
           Guardar cambios
+        </button>
+      </Panel>
+    </div>
+  );
+}
+function SettingsPage({ setPage }) {
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem("userSettings");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          country: "España",
+          province: "Valencia",
+          language: "Español",
+          appearance: "Claro",
+          emailNotifications: true,
+          opportunityAlerts: true,
+          chatNotifications: true,
+          privacyVisibility: "Perfil privado",
+        };
+  });
+
+  function saveSettings() {
+    localStorage.setItem("userSettings", JSON.stringify(settings));
+    alert("Ajustes guardados correctamente");
+    setPage("profile");
+  }
+
+  return (
+    <div className="space-y-6">
+      <button
+        onClick={() => setPage("profile")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver a mi cuenta
+      </button>
+
+      <Panel title="Ajustes de cuenta">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label>País de búsqueda</label>
+            <select
+              value={settings.country}
+              onChange={(e) =>
+                setSettings((p) => ({ ...p, country: e.target.value }))
+              }
+            >
+              <option>España</option>
+              <option>Portugal</option>
+              <option>Francia</option>
+              <option>Italia</option>
+            </select>
+          </div>
+
+          <ProvinceSelect
+            value={settings.province}
+            onChange={(e) =>
+              setSettings((p) => ({ ...p, province: e.target.value }))
+            }
+          />
+
+          <div>
+            <label>Idioma</label>
+            <select
+              value={settings.language}
+              onChange={(e) =>
+                setSettings((p) => ({ ...p, language: e.target.value }))
+              }
+            >
+              <option>Español</option>
+              <option>Inglés</option>
+              <option>Francés</option>
+              <option>Portugués</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Apariencia</label>
+            <select
+              value={settings.appearance}
+              onChange={(e) =>
+                setSettings((p) => ({ ...p, appearance: e.target.value }))
+              }
+            >
+              <option>Claro</option>
+              <option>Oscuro</option>
+              <option>Automático</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Privacidad del perfil</label>
+            <select
+              value={settings.privacyVisibility}
+              onChange={(e) =>
+                setSettings((p) => ({
+                  ...p,
+                  privacyVisibility: e.target.value,
+                }))
+              }
+            >
+              <option>Perfil privado</option>
+              <option>Visible para anunciantes</option>
+              <option>Visible para inversores</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-6 space-y-3">
+          <label style={{ display: "flex", gap: "10px" }}>
+            <input
+              type="checkbox"
+              checked={settings.emailNotifications}
+              onChange={(e) =>
+                setSettings((p) => ({
+                  ...p,
+                  emailNotifications: e.target.checked,
+                }))
+              }
+            />
+            Recibir notificaciones por email
+          </label>
+
+          <label style={{ display: "flex", gap: "10px" }}>
+            <input
+              type="checkbox"
+              checked={settings.opportunityAlerts}
+              onChange={(e) =>
+                setSettings((p) => ({
+                  ...p,
+                  opportunityAlerts: e.target.checked,
+                }))
+              }
+            />
+            Recibir alertas de nuevas oportunidades
+          </label>
+
+          <label style={{ display: "flex", gap: "10px" }}>
+            <input
+              type="checkbox"
+              checked={settings.chatNotifications}
+              onChange={(e) =>
+                setSettings((p) => ({
+                  ...p,
+                  chatNotifications: e.target.checked,
+                }))
+              }
+            />
+            Recibir avisos de nuevos mensajes
+          </label>
+        </div>
+
+        <button
+          onClick={saveSettings}
+          className="mt-6 rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white"
+        >
+          Guardar ajustes
         </button>
       </Panel>
     </div>
