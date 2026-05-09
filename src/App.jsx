@@ -2304,12 +2304,12 @@ function SettingsPage({ setPage }) {
       ...settings,
     };
 
-    const { error } = await supabase
-      .from("user_settings")
-      .upsert(payload);
+   const { error } = await supabase
+  .from("user_settings")
+  .upsert(payload, { onConflict: "user_id" });
 
     if (error) {
-      alert("Error guardando ajustes");
+     alert("Error guardando ajustes: " + error.message);
       return;
     }
 
