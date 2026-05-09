@@ -2404,7 +2404,7 @@ function SettingsPage({ setPage }) {
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                email_notifications: e.target.checked, 
+                email_notifications: e.target.checked 
                 }))
               }
             />
