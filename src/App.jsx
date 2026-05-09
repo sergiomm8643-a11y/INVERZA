@@ -2126,40 +2126,107 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
           </div>
         </div>
 
-        {form.media && form.media.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-xl font-bold">Fotos y vídeos actuales</h3>
-            <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-              {form.media.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-2">
-                  {item.type === "image" ? (
-                    <img
-                      src={item.url}
-                      alt={item.name}
-                      style={{
-                        width: "100%",
-                        height: "120px",
-                        objectFit: "cover",
-                        borderRadius: "14px",
-                      }}
-                    />
-                  ) : (
-                    <video
-                      src={item.url}
-                      controls
-                      style={{
-                        width: "100%",
-                        height: "120px",
-                        objectFit: "cover",
-                        borderRadius: "14px",
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+       <div className="mt-6">
+  <h3 className="text-xl font-bold">Fotos y vídeos actuales</h3>
+
+  {form.media && form.media.length > 0 ? (
+    <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+      {form.media.map((item) => (
+        <div
+          key={item.id}
+          className="rounded-2xl border border-slate-200 bg-white p-2"
+        >
+          {item.type === "image" ? (
+            <img
+              src={item.url}
+              alt={item.name}
+              style={{
+                width: "100%",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "14px",
+              }}
+            />
+          ) : (
+            <video
+              src={item.url}
+              controls
+              style={{
+                width: "100%",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "14px",
+              }}
+            />
+          )}
+
+          <button
+            onClick={() => {
+              setForm((p) => ({
+                ...p,
+                media: (p.media || []).filter((m) => m.id !== item.id),
+              }));
+            }}
+            className="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold text-red-500"
+          >
+            Eliminar
+          </button>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="mt-3 text-slate-500">Este anuncio no tiene imágenes ni vídeos todavía.</p>
+  )}
+
+  <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <label className="mb-2 block text-sm font-bold text-slate-600">
+      Añadir nuevas fotos o vídeos
+    </label>
+
+    <input
+      type="file"
+      accept="image/*,video/*"
+      multiple
+      onChange={async (e) => {
+        const files = Array.from(e.target.files || []);
+        const uploadedMedia = [];
+
+        for (const file of files) {
+          const filePath = `${Date.now()}-${file.name}`;
+
+          const { error } = await supabase.storage
+            .from("listing-media")
+            .upload(filePath, file, {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: file.type,
+            });
+
+          if (error) {
+            alert("Error subiendo archivo: " + error.message);
+            return;
+          }
+
+          const { data } = supabase.storage
+            .from("listing-media")
+            .getPublicUrl(filePath);
+
+          uploadedMedia.push({
+            id: Date.now() + Math.random(),
+            name: file.name,
+            type: file.type.startsWith("video") ? "video" : "image",
+            url: data.publicUrl,
+          });
+        }
+
+        setForm((p) => ({
+          ...p,
+          media: [...(p.media || []), ...uploadedMedia],
+        }));
+      }}
+    />
+  </div>
+</div>
 
         <button
           onClick={saveChanges}
