@@ -2256,27 +2256,65 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
   );
 }
 function SettingsPage({ setPage }) {
-  const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem("userSettings");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          country: "España",
-          province: "Valencia",
-          language: "Español",
-          appearance: "Claro",
-          emailNotifications: true,
-          opportunityAlerts: true,
-          chatNotifications: true,
-          privacyVisibility: "Perfil privado",
-        };
-  });
+  const [settings, setSettings] = useState({
+   useEffect(() => {
+  async function loadSettings() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  function saveSettings() {
-    localStorage.setItem("userSettings", JSON.stringify(settings));
-    alert("Ajustes guardados correctamente");
-    setPage("profile");
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("user_settings")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+
+    if (data) {
+      setSettings(data);
+    }
   }
+
+  loadSettings();
+}, []); 
+  country: "España",
+  province: "Valencia",
+  language: "Español",
+  appearance: "Claro",
+  email_notifications: true,
+  opportunity_alerts: true,
+  chat_notifications: true,
+  privacy_visibility: "Perfil privado",
+});
+
+ async function saveSettings() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    alert("Debes iniciar sesión");
+    return;
+  }
+
+  const payload = {
+    user_id: user.id,
+    ...settings,
+  };
+
+  const { error } = await supabase
+    .from("user_settings")
+    .upsert(payload);
+
+  if (error) {
+    alert("Error guardando ajustes");
+    return;
+  }
+
+  alert("Ajustes guardados correctamente");
+  setPage("profile");
+}
 
   return (
     <div className="space-y-6">
@@ -2343,11 +2381,11 @@ function SettingsPage({ setPage }) {
           <div>
             <label>Privacidad del perfil</label>
             <select
-              value={settings.privacyVisibility}
+              value={settings.privacy_Visibility}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  privacyVisibility: e.target.value,
+                  privacy_Visibility: e.target.value,
                 }))
               }
             >
@@ -2362,11 +2400,11 @@ function SettingsPage({ setPage }) {
           <label style={{ display: "flex", gap: "10px" }}>
             <input
               type="checkbox"
-              checked={settings.emailNotifications}
+              checked={settings.email_notifications}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  emailNotifications: e.target.checked,
+                email_notifications: e.target.checked, 
                 }))
               }
             />
@@ -2376,11 +2414,11 @@ function SettingsPage({ setPage }) {
           <label style={{ display: "flex", gap: "10px" }}>
             <input
               type="checkbox"
-              checked={settings.opportunityAlerts}
+              checked={settings.opportunity_Alerts}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  opportunityAlerts: e.target.checked,
+                  opportunity_Alerts: e.target.checked,
                 }))
               }
             />
@@ -2390,11 +2428,11 @@ function SettingsPage({ setPage }) {
           <label style={{ display: "flex", gap: "10px" }}>
             <input
               type="checkbox"
-              checked={settings.chatNotifications}
+              checked={settings.chat_Notifications}
               onChange={(e) =>
                 setSettings((p) => ({
                   ...p,
-                  chatNotifications: e.target.checked,
+                  chat_Notifications: e.target.checked,
                 }))
               }
             />
