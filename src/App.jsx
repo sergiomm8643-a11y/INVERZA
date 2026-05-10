@@ -2373,7 +2373,6 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
 
   const operations = ["Venta", "Alquiler", "Buscar inversor", "Permuta"];
   const legalStatuses = ["Libre", "Alquilado", "Ocupado ilegalmente"];
-
   const propertyStatuses = [
     "Para entrar a vivir",
     "Lavado de cara",
@@ -2396,49 +2395,50 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
       };
     });
   }
- async function saveChanges() {
-  if (!listing?.id) {
-    alert("No se ha encontrado el anuncio.");
-    return;
+
+  async function saveChanges() {
+    if (!listing?.id) {
+      alert("No se ha encontrado el anuncio.");
+      return;
+    }
+
+    const payload = {
+      title: form.title,
+      type: form.type,
+      operation: form.operation,
+      province: form.province,
+      city: form.city,
+      location: form.location,
+      hide_address: form.hide_address,
+      price: form.price,
+      estimated_sale_m2: form.estimated_sale_m2,
+      m2_housing: form.m2_housing,
+      m2_plot: form.m2_plot,
+      bedrooms: form.bedrooms,
+      bathrooms: form.bathrooms,
+      units: form.units,
+      legal_status: form.legal_status,
+      property_status: form.property_status,
+      exit_options: form.exit_options || [],
+      description: form.description,
+      status: form.status,
+      media: form.media || [],
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from("listings")
+      .update(payload)
+      .eq("id", listing.id);
+
+    if (error) {
+      alert("Error actualizando anuncio: " + error.message);
+      return;
+    }
+
+    alert("Anuncio actualizado correctamente");
+    setPage("myListings");
   }
-
- const payload = {
-  title: form.title,
-  type: form.type,
-  operation: form.operation,
-  province: form.province,
-  city: form.city,
-  location: form.location,
-  hide_address: form.hide_address,
-  price: form.price,
-  estimated_sale_m2: form.estimated_sale_m2,
-  m2_housing: form.m2_housing,
-  m2_plot: form.m2_plot,
-  bedrooms: form.bedrooms,
-  bathrooms: form.bathrooms,
-  units: form.units,
-  legal_status: form.legal_status,
-  property_status: form.property_status,
-  exit_options: form.exit_options || [],
-  description: form.description,
-  status: form.status,
-  media: form.media || [],
-  updated_at: new Date().toISOString(),
-};
-
-  const { error } = await supabase
-    .from("listings")
-    .update(payload)
-    .eq("id", listing.id);
-
-  if (error) {
-    alert("Error actualizando anuncio: " + error.message);
-    return;
-  }
-
-  alert("Anuncio actualizado correctamente");
-  setPage("myListings");
-}
 
   return (
     <div className="space-y-6">
@@ -2449,292 +2449,183 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
         ← Volver a mis anuncios
       </button>
 
-     <Panel title="Datos básicos">
-  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-    <div>
-      <label>Tipo de inmueble</label>
-      <select
-        value={form.type}
-        onChange={(e) => updateForm("type", e.target.value)}
-      >
-        {propertyTypes.map((item) => (
-          <option key={item}>{item}</option>
-        ))}
-      </select>
-    </div>
+      <Panel title="Datos básicos">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label>Tipo de inmueble</label>
+            <select value={form.type} onChange={(e) => updateForm("type", e.target.value)}>
+              {propertyTypes.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </div>
 
-    <div>
-      <label>Operación</label>
-      <select
-        value={form.operation}
-        onChange={(e) => updateForm("operation", e.target.value)}
-      >
-        {operations.map((item) => (
-          <option key={item}>{item}</option>
-        ))}
-      </select>
-    </div>
+          <div>
+            <label>Operación</label>
+            <select value={form.operation} onChange={(e) => updateForm("operation", e.target.value)}>
+              {operations.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </div>
 
-    <ProvinceSelect
-      value={form.province}
-      onChange={(e) => updateForm("province", e.target.value)}
-    />
+          <ProvinceSelect value={form.province} onChange={(e) => updateForm("province", e.target.value)} />
 
-    <Field
-      label="Municipio"
-      placeholder={form.city || "Valencia, Alicante, Elche..."}
-      onChange={(e) => updateForm("city", e.target.value)}
-    />
+          <Field label="Municipio" placeholder={form.city || "Valencia"} onChange={(e) => updateForm("city", e.target.value)} />
+          <Field label="Dirección / ubicación" placeholder={form.location || "Calle, número..."} onChange={(e) => updateForm("location", e.target.value)} />
 
-    <Field
-      label="Dirección / ubicación"
-      placeholder={form.location || "Calle, número, urbanización..."}
-      onChange={(e) => updateForm("location", e.target.value)}
-    />
-
-    <label style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-      <input
-        type="checkbox"
-        checked={form.hide_address}
-        onChange={(e) => updateForm("hide_address", e.target.checked)}
-        style={{ width: "18px" }}
-      />
-      Ocultar dirección exacta al público
-    </label>
-
-    <Field
-      label="Título del anuncio"
-      placeholder={form.title || "Ej: Piso con alto potencial en Ruzafa"}
-      onChange={(e) => updateForm("title", e.target.value)}
-    />
-
-    <Field
-      label="Precio"
-      placeholder={form.price || "120.000 €"}
-      onChange={(e) => updateForm("price", e.target.value)}
-    />
-
-    <Field
-      label="Venta estimada €/m² zona"
-      placeholder={form.estimated_sale_m2 || "3.200"}
-      onChange={(e) => updateForm("estimated_sale_m2", e.target.value)}
-    />
-  </div>
-</Panel>
-
-<Panel title="Características del inmueble">
-  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-    <Field
-      label="M2 vivienda"
-      placeholder={form.m2_housing || "85"}
-      onChange={(e) => updateForm("m2_housing", e.target.value)}
-    />
-
-    <Field
-      label="M2 parcela"
-      placeholder={form.m2_plot || "120"}
-      onChange={(e) => updateForm("m2_plot", e.target.value)}
-    />
-
-    <Field
-      label="Unidades"
-      placeholder={form.units || "1"}
-      onChange={(e) => updateForm("units", e.target.value)}
-    />
-
-    <Field
-      label="Habitaciones"
-      placeholder={form.bedrooms || "3"}
-      onChange={(e) => updateForm("bedrooms", e.target.value)}
-    />
-
-    <Field
-      label="Baños"
-      placeholder={form.bathrooms || "2"}
-      onChange={(e) => updateForm("bathrooms", e.target.value)}
-    />
-
-    <div>
-      <label>Estado del inmueble</label>
-      <select
-        value={form.property_status}
-        onChange={(e) => updateForm("property_status", e.target.value)}
-      >
-        {propertyStatuses.map((item) => (
-          <option key={item}>{item}</option>
-        ))}
-      </select>
-    </div>
-
-    <div>
-      <label>Estado legal</label>
-      <select
-        value={form.legal_status}
-        onChange={(e) => updateForm("legal_status", e.target.value)}
-      >
-        {legalStatuses.map((item) => (
-          <option key={item}>{item}</option>
-        ))}
-      </select>
-    </div>
-
-    <div>
-      <label>Estado del anuncio</label>
-      <select
-        value={form.status}
-        onChange={(e) => updateForm("status", e.target.value)}
-      >
-        <option>Activo</option>
-        <option>Pausado</option>
-        <option>Vendido</option>
-        <option>Alquilado</option>
-      </select>
-    </div>
-  </div>
-</Panel>
-
-<Panel title="Opciones de salida">
-  <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-    {["Venta directa", "Alquiler", "Buscar inversor", "Permuta"].map((item) => {
-      const active = (form.exit_options || []).includes(item);
-
-      return (
-        <button
-          key={item}
-          type="button"
-          onClick={() => toggleExitOption(item)}
-          className={`rounded-xl border px-4 py-4 font-semibold ${
-            active
-              ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-              : "border-slate-200 bg-slate-50 text-slate-800"
-          }`}
-        >
-          {active ? "✓ " : ""}
-          {item}
-        </button>
-      );
-    })}
-  </div>
-</Panel>
-
-<Panel title="Descripción">
-  <textarea
-    rows="6"
-    placeholder="Describe el inmueble, su estado, oportunidad, potencial de reforma, rentabilidad o motivo de venta..."
-    value={form.description}
-    onChange={(e) => updateForm("description", e.target.value)}
-  />
-</Panel>
-
-       <div className="mt-6">
-  <h3 className="text-xl font-bold">Fotos y vídeos actuales</h3>
-
-  {form.media && form.media.length > 0 ? (
-    <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-      {form.media.map((item) => (
-        <div
-          key={item.id}
-          className="rounded-2xl border border-slate-200 bg-white p-2"
-        >
-          {item.type === "image" ? (
-            <img
-              src={item.url}
-              alt={item.name}
-              style={{
-                width: "100%",
-                height: "120px",
-                objectFit: "cover",
-                borderRadius: "14px",
-              }}
+          <label style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <input
+              type="checkbox"
+              checked={form.hide_address}
+              onChange={(e) => updateForm("hide_address", e.target.checked)}
+              style={{ width: "18px" }}
             />
-          ) : (
-            <video
-              src={item.url}
-              controls
-              style={{
-                width: "100%",
-                height: "120px",
-                objectFit: "cover",
-                borderRadius: "14px",
-              }}
-            />
-          )}
+            Ocultar dirección exacta al público
+          </label>
 
-          <button
-            onClick={() => {
-              setForm((p) => ({
-                ...p,
-                media: (p.media || []).filter((m) => m.id !== item.id),
-              }));
-            }}
-            className="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold text-red-500"
-          >
-            Eliminar
-          </button>
+          <Field label="Título del anuncio" placeholder={form.title || "Título"} onChange={(e) => updateForm("title", e.target.value)} />
+          <Field label="Precio" placeholder={form.price || "120.000 €"} onChange={(e) => updateForm("price", e.target.value)} />
+          <Field label="Venta estimada €/m² zona" placeholder={form.estimated_sale_m2 || "3.200"} onChange={(e) => updateForm("estimated_sale_m2", e.target.value)} />
         </div>
-      ))}
-    </div>
-  ) : (
-    <p className="mt-3 text-slate-500">Este anuncio no tiene imágenes ni vídeos todavía.</p>
-  )}
-
-  <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-    <label className="mb-2 block text-sm font-bold text-slate-600">
-      Añadir nuevas fotos o vídeos
-    </label>
-
-    <input
-      type="file"
-      accept="image/*,video/*"
-      multiple
-      onChange={async (e) => {
-        const files = Array.from(e.target.files || []);
-        const uploadedMedia = [];
-
-        for (const file of files) {
-          const filePath = `${Date.now()}-${file.name}`;
-
-          const { error } = await supabase.storage
-            .from("listing-media")
-            .upload(filePath, file, {
-              cacheControl: "3600",
-              upsert: false,
-              contentType: file.type,
-            });
-
-          if (error) {
-            alert("Error subiendo archivo: " + error.message);
-            return;
-          }
-
-          const { data } = supabase.storage
-            .from("listing-media")
-            .getPublicUrl(filePath);
-
-          uploadedMedia.push({
-            id: Date.now() + Math.random(),
-            name: file.name,
-            type: file.type.startsWith("video") ? "video" : "image",
-            url: data.publicUrl,
-          });
-        }
-
-        setForm((p) => ({
-          ...p,
-          media: [...(p.media || []), ...uploadedMedia],
-        }));
-      }}
-    />
-  </div>
-</div>
-
-        <button
-          onClick={saveChanges}
-          className="mt-6 rounded-2xl bg-emerald-500 px-5 py-3 font-bold text-white"
-        >
-          Guardar cambios
-        </button>
       </Panel>
+
+      <Panel title="Características del inmueble">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Field label="M2 vivienda" placeholder={form.m2_housing || "85"} onChange={(e) => updateForm("m2_housing", e.target.value)} />
+          <Field label="M2 parcela" placeholder={form.m2_plot || "120"} onChange={(e) => updateForm("m2_plot", e.target.value)} />
+          <Field label="Unidades" placeholder={form.units || "1"} onChange={(e) => updateForm("units", e.target.value)} />
+          <Field label="Habitaciones" placeholder={form.bedrooms || "3"} onChange={(e) => updateForm("bedrooms", e.target.value)} />
+          <Field label="Baños" placeholder={form.bathrooms || "2"} onChange={(e) => updateForm("bathrooms", e.target.value)} />
+
+          <div>
+            <label>Estado del inmueble</label>
+            <select value={form.property_status} onChange={(e) => updateForm("property_status", e.target.value)}>
+              {propertyStatuses.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label>Estado legal</label>
+            <select value={form.legal_status} onChange={(e) => updateForm("legal_status", e.target.value)}>
+              {legalStatuses.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label>Estado del anuncio</label>
+            <select value={form.status} onChange={(e) => updateForm("status", e.target.value)}>
+              <option>Activo</option>
+              <option>Pausado</option>
+              <option>Vendido</option>
+              <option>Alquilado</option>
+            </select>
+          </div>
+        </div>
+      </Panel>
+
+      <Panel title="Opciones de salida">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          {["Venta directa", "Alquiler", "Buscar inversor", "Permuta"].map((item) => {
+            const active = (form.exit_options || []).includes(item);
+            return (
+              <button
+                key={item}
+                type="button"
+                onClick={() => toggleExitOption(item)}
+                className={`rounded-xl border px-4 py-4 font-semibold ${
+                  active
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                    : "border-slate-200 bg-slate-50 text-slate-800"
+                }`}
+              >
+                {active ? "✓ " : ""}
+                {item}
+              </button>
+            );
+          })}
+        </div>
+      </Panel>
+
+      <Panel title="Descripción">
+        <textarea
+          rows="6"
+          placeholder="Describe el inmueble..."
+          value={form.description}
+          onChange={(e) => updateForm("description", e.target.value)}
+        />
+      </Panel>
+
+      <Panel title="Fotos y vídeos">
+        {form.media && form.media.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {form.media.map((item) => (
+              <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-2">
+                {item.type === "image" ? (
+                  <img src={item.url} alt={item.name} style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "14px" }} />
+                ) : (
+                  <video src={item.url} controls style={{ width: "100%", height: "120px", objectFit: "cover", borderRadius: "14px" }} />
+                )}
+
+                <button
+                  onClick={() => updateForm("media", (form.media || []).filter((m) => m.id !== item.id))}
+                  className="mt-2 w-full rounded-xl border px-3 py-2 text-sm font-bold text-red-500"
+                >
+                  Eliminar
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-slate-500">Este anuncio no tiene imágenes ni vídeos todavía.</p>
+        )}
+
+        <div className="mt-6">
+          <label>Añadir nuevas fotos o vídeos</label>
+          <input
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            onChange={async (e) => {
+              const files = Array.from(e.target.files || []);
+              const uploadedMedia = [];
+
+              for (const file of files) {
+                const filePath = `${Date.now()}-${file.name}`;
+
+                const { error } = await supabase.storage
+                  .from("listing-media")
+                  .upload(filePath, file, {
+                    cacheControl: "3600",
+                    upsert: false,
+                    contentType: file.type,
+                  });
+
+                if (error) {
+                  alert("Error subiendo archivo: " + error.message);
+                  return;
+                }
+
+                const { data } = supabase.storage
+                  .from("listing-media")
+                  .getPublicUrl(filePath);
+
+                uploadedMedia.push({
+                  id: Date.now() + Math.random(),
+                  name: file.name,
+                  type: file.type.startsWith("video") ? "video" : "image",
+                  url: data.publicUrl,
+                });
+              }
+
+              updateForm("media", [...(form.media || []), ...uploadedMedia]);
+            }}
+          />
+        </div>
+      </Panel>
+
+      <button
+        onClick={saveChanges}
+        className="w-full rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-sm"
+      >
+        Guardar cambios
+      </button>
     </div>
   );
 }
