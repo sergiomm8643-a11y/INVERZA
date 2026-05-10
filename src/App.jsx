@@ -2107,25 +2107,36 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
     }
   );
 
-  function saveChanges() {
-    const saved = localStorage.getItem("myListings");
-    const current = saved ? JSON.parse(saved) : [];
-
-    if (listingIndex === null || listingIndex === undefined) {
-      alert("No se ha encontrado el anuncio para editar.");
-      return;
-    }
-
-    current[listingIndex] = {
-      ...current[listingIndex],
-      ...form,
-      updatedAt: new Date().toISOString(),
-    };
-
-    localStorage.setItem("myListings", JSON.stringify(current));
-    alert("Anuncio actualizado correctamente");
-    setPage("myListings");
+ async function saveChanges() {
+  if (!listing?.id) {
+    alert("No se ha encontrado el anuncio.");
+    return;
   }
+
+  const payload = {
+    title: form.title,
+    type: form.type,
+    operation: form.operation,
+    location: form.location,
+    price: form.price,
+    status: form.status,
+    media: form.media || [],
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("listings")
+    .update(payload)
+    .eq("id", listing.id);
+
+  if (error) {
+    alert("Error actualizando anuncio: " + error.message);
+    return;
+  }
+
+  alert("Anuncio actualizado correctamente");
+  setPage("myListings");
+}
 
   return (
     <div className="space-y-6">
