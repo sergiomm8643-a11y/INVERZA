@@ -1153,29 +1153,44 @@ function PublishPage({ setPage }) {
   )}
 </Panel>
      <button
-  onClick={() => {
-    const saved = localStorage.getItem("myListings");
-    const current = saved ? JSON.parse(saved) : [];
+ onClick={async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const listingToSave = {
-      ...newListing,
-      id: Date.now(),
-      title:
-        newListing.title ||
-        `${newListing.type || "Inmueble"} en ${
-          newListing.location || "ubicación pendiente"
-        }`,
-      createdAt: new Date().toISOString(),
-    };
+  if (!user) {
+    alert("Debes iniciar sesión para publicar");
+    setPage("login");
+    return;
+  }
 
-    localStorage.setItem(
-      "myListings",
-      JSON.stringify([listingToSave, ...current])
-    );
+  const listingToSave = {
+    user_id: user.id,
+    title:
+      newListing.title ||
+      `${newListing.type || "Inmueble"} en ${
+        newListing.location || "ubicación pendiente"
+      }`,
+    type: newListing.type,
+    operation: newListing.operation,
+    province: newListing.province,
+    city: newListing.city,
+    location: newListing.location,
+    price: newListing.price,
+    status: newListing.status || "Activo",
+    media: newListing.media || [],
+  };
 
-    alert("Inmueble publicado correctamente");
-    setPage("myListings");
-  }}
+  const { error } = await supabase.from("listings").insert(listingToSave);
+
+  if (error) {
+    alert("Error publicando anuncio: " + error.message);
+    return;
+  }
+
+  alert("Inmueble publicado correctamente");
+  setPage("myListings");
+}}
   className="w-full rounded-2xl bg-emerald-500 px-6 py-4 font-black text-white shadow-sm"
 >
   Publicar inmueble
