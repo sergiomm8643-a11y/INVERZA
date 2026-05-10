@@ -1019,6 +1019,7 @@ function PublishPage({ setPage }) {
   description: "",
   status: "Activo",
   media: [],
+   estimatedSaleM2: "",
 });
  const propertyTypes = [
   "Terreno",
@@ -1137,7 +1138,11 @@ function toggleExitOption(option) {
       placeholder="85"
       onChange={(e) => updateListing("m2Housing", e.target.value)}
     />
-
+<Field
+  label="Venta estimada €/m² zona"
+  placeholder="3.200"
+  onChange={(e) => updateListing("estimatedSaleM2", e.target.value)}
+/>
     <Field
       label="M2 parcela"
       placeholder="120"
@@ -1322,6 +1327,7 @@ function toggleExitOption(option) {
     city: newListing.city,
     location: newListing.location,
     price: newListing.price,
+    estimated_sale_m2: newListing.estimatedSaleM2,
     status: newListing.status || "Activo",
     hide_address: newListing.hideAddress,
 m2_housing: newListing.m2Housing,
