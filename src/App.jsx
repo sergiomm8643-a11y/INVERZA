@@ -999,15 +999,66 @@ function ListingPage({ listing, isFavorite, toggleFavorite }) {
 }
 
 function PublishPage({ setPage }) {
-  const [newListing, setNewListing] = useState({
+ const [newListing, setNewListing] = useState({
   title: "",
+  type: "Vivienda",
+  operation: "Venta",
+  province: "Valencia",
+  city: "",
   location: "",
+  hideAddress: false,
   price: "",
-  type: "",
-  operation: "",
+  m2Housing: "",
+  m2Plot: "",
+  bedrooms: "",
+  bathrooms: "",
+  units: "1",
+  legalStatus: "Libre",
+  propertyStatus: "Para entrar a vivir",
+  exitOptions: [],
+  description: "",
   status: "Activo",
-    media: [],
+  media: [],
 });
+ const propertyTypes = [
+  "Terreno",
+  "Vivienda",
+  "Habitaciones",
+  "Oficinas",
+  "Locales o naves",
+  "Traspasos",
+  "Garajes",
+  "Trasteros",
+  "Edificios",
+  "Vacacionales",
+];
+
+const operations = ["Venta", "Alquiler", "Buscar inversor", "Permuta"];
+
+const legalStatuses = ["Libre", "Alquilado", "Ocupado ilegalmente"];
+
+const propertyStatuses = [
+  "Para entrar a vivir",
+  "Lavado de cara",
+  "Reforma parcial",
+  "Reforma integral",
+];
+
+function updateListing(key, value) {
+  setNewListing((p) => ({ ...p, [key]: value }));
+}
+
+function toggleExitOption(option) {
+  setNewListing((p) => {
+    const exists = p.exitOptions.includes(option);
+    return {
+      ...p,
+      exitOptions: exists
+        ? p.exitOptions.filter((x) => x !== option)
+        : [...p.exitOptions, option],
+    };
+  });
+} 
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-black text-slate-900">Publicar inmueble</h1>
