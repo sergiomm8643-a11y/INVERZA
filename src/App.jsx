@@ -2336,65 +2336,66 @@ function calculateInvestment(listing) {
 }
 function EditMyListingPage({ listing, listingIndex, setPage }) {
   const [form, setForm] = useState({
-   const propertyTypes = [
-  "Terreno",
-  "Vivienda",
-  "Habitaciones",
-  "Oficinas",
-  "Locales o naves",
-  "Traspasos",
-  "Garajes",
-  "Trasteros",
-  "Edificios",
-  "Vacacionales",
-];
-
-const operations = ["Venta", "Alquiler", "Buscar inversor", "Permuta"];
-const legalStatuses = ["Libre", "Alquilado", "Ocupado ilegalmente"];
-
-const propertyStatuses = [
-  "Para entrar a vivir",
-  "Lavado de cara",
-  "Reforma parcial",
-  "Reforma integral",
-];
-
-function updateForm(key, value) {
-  setForm((p) => ({ ...p, [key]: value }));
-}
-
-function toggleExitOption(option) {
-  setForm((p) => {
-    const exists = (p.exit_options || []).includes(option);
-    return {
-      ...p,
-      exit_options: exists
-        ? p.exit_options.filter((x) => x !== option)
-        : [...(p.exit_options || []), option],
-    };
+    title: listing?.title || "",
+    type: listing?.type || "Vivienda",
+    operation: listing?.operation || "Venta",
+    province: listing?.province || "Valencia",
+    city: listing?.city || "",
+    location: listing?.location || "",
+    hide_address: listing?.hide_address || false,
+    price: listing?.price || "",
+    estimated_sale_m2: listing?.estimated_sale_m2 || "",
+    m2_housing: listing?.m2_housing || "",
+    m2_plot: listing?.m2_plot || "",
+    bedrooms: listing?.bedrooms || "",
+    bathrooms: listing?.bathrooms || "",
+    units: listing?.units || "1",
+    legal_status: listing?.legal_status || "Libre",
+    property_status: listing?.property_status || "Para entrar a vivir",
+    exit_options: listing?.exit_options || [],
+    description: listing?.description || "",
+    status: listing?.status || "Activo",
+    media: listing?.media || [],
   });
-} 
-  title: listing?.title || "",
-  type: listing?.type || "Vivienda",
-  operation: listing?.operation || "Venta",
-  province: listing?.province || "Valencia",
-  city: listing?.city || "",
-  location: listing?.location || "",
-  hide_address: listing?.hide_address || false,
-  price: listing?.price || "",
-  estimated_sale_m2: listing?.estimated_sale_m2 || "",
-  m2_housing: listing?.m2_housing || "",
-  m2_plot: listing?.m2_plot || "",
-  bedrooms: listing?.bedrooms || "",
-  bathrooms: listing?.bathrooms || "",
-  units: listing?.units || "1",
-  legal_status: listing?.legal_status || "Libre",
-  property_status: listing?.property_status || "Para entrar a vivir",
-  exit_options: listing?.exit_options || [],
-  description: listing?.description || "",
-  status: listing?.status || "Activo",
-  media: listing?.media || [],
-});
+
+  const propertyTypes = [
+    "Terreno",
+    "Vivienda",
+    "Habitaciones",
+    "Oficinas",
+    "Locales o naves",
+    "Traspasos",
+    "Garajes",
+    "Trasteros",
+    "Edificios",
+    "Vacacionales",
+  ];
+
+  const operations = ["Venta", "Alquiler", "Buscar inversor", "Permuta"];
+  const legalStatuses = ["Libre", "Alquilado", "Ocupado ilegalmente"];
+
+  const propertyStatuses = [
+    "Para entrar a vivir",
+    "Lavado de cara",
+    "Reforma parcial",
+    "Reforma integral",
+  ];
+
+  function updateForm(key, value) {
+    setForm((p) => ({ ...p, [key]: value }));
+  }
+
+  function toggleExitOption(option) {
+    setForm((p) => {
+      const exists = (p.exit_options || []).includes(option);
+      return {
+        ...p,
+        exit_options: exists
+          ? p.exit_options.filter((x) => x !== option)
+          : [...(p.exit_options || []), option],
+      };
+    });
+  }
  async function saveChanges() {
   if (!listing?.id) {
     alert("No se ha encontrado el anuncio.");
