@@ -1323,6 +1323,16 @@ function toggleExitOption(option) {
     location: newListing.location,
     price: newListing.price,
     status: newListing.status || "Activo",
+    hide_address: newListing.hideAddress,
+m2_housing: newListing.m2Housing,
+m2_plot: newListing.m2Plot,
+bedrooms: newListing.bedrooms,
+bathrooms: newListing.bathrooms,
+units: newListing.units,
+legal_status: newListing.legalStatus,
+property_status: newListing.propertyStatus,
+exit_options: newListing.exitOptions,
+description: newListing.description,
     media: newListing.media || [],
   };
 
