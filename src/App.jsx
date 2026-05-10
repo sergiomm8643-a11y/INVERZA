@@ -1908,10 +1908,32 @@ function ProfilePage({ setPage }) {
   );
 }
 function MyListingsPage({ setPage, setSelectedMyListing, setEditingMyListingIndex }) {
-  const [myListings, setMyListings] = useState(() => {
-    const saved = localStorage.getItem("myListings");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [myListings, setMyListings] = useState([]);
+
+useEffect(() => {
+  async function loadMyListings() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      alert("Error cargando anuncios: " + error.message);
+      return;
+    }
+
+    setMyListings(data || []);
+  }
+
+  loadMyListings();
+}, []);
 
   return (
     <div className="space-y-6">
@@ -1974,16 +1996,24 @@ function MyListingsPage({ setPage, setSelectedMyListing, setEditingMyListingInde
   Editar
 </button>
 
-              <button
-  onClick={() => {
-    const updated = myListings.filter((_, i) => i !== index);
-    setMyListings(updated);
-    localStorage.setItem("myListings", JSON.stringify(updated));
+           <button
+  onClick={async () => {
+    const { error } = await supabase
+      .from("listings")
+      .delete()
+      .eq("id", item.id);
+
+    if (error) {
+      alert("Error eliminando anuncio: " + error.message);
+      return;
+    }
+
+    setMyListings((prev) => prev.filter((x) => x.id !== item.id));
   }}
   className="rounded-xl border px-4 py-2 text-red-500"
 >
   Eliminar
-</button>
+</button> 
             </div>
           </div>
         ))}
