@@ -2305,14 +2305,65 @@ function calculateInvestment(listing) {
   </Panel>
 )}
       <Panel title={listing.title || "Detalle del anuncio"}>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <MiniMetric label="Tipo" value={listing.type || "No definido"} />
-          <MiniMetric label="Operación" value={listing.operation || "No definido"} />
-          <MiniMetric label="Ubicación" value={listing.location || "No definida"} />
-          <MiniMetric label="Precio" value={listing.price || "No definido"} />
-          <MiniMetric label="Estado" value={listing.status || "Activo"} />
-          <MiniMetric label="Publicado" value={listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : "Hoy"} />
+       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+  <MiniMetric label="Tipo inmueble" value={listing.type || "-"} />
+  <MiniMetric label="Operación" value={listing.operation || "-"} />
+  <MiniMetric label="Provincia" value={listing.province || "-"} />
+
+  <MiniMetric label="Municipio" value={listing.city || "-"} />
+  <MiniMetric label="Ubicación" value={listing.location || "-"} />
+  <MiniMetric label="Precio" value={listing.price || "-"} accent />
+
+  <MiniMetric label="M2 vivienda" value={listing.m2_housing || "-"} />
+  <MiniMetric label="M2 parcela" value={listing.m2_plot || "-"} />
+  <MiniMetric label="Unidades" value={listing.units || "-"} />
+
+  <MiniMetric label="Habitaciones" value={listing.bedrooms || "-"} />
+  <MiniMetric label="Baños" value={listing.bathrooms || "-"} />
+  <MiniMetric label="Estado legal" value={listing.legal_status || "-"} />
+
+  <MiniMetric label="Estado inmueble" value={listing.property_status || "-"} />
+  <MiniMetric label="Estado anuncio" value={listing.status || "-"} />
+
+  <MiniMetric
+    label="Publicado"
+    value={
+      listing.created_at
+        ? new Date(listing.created_at).toLocaleDateString()
+        : "-"
+    }
+  />
+</div>
+        {listing.exit_options && listing.exit_options.length > 0 && (
+  <div className="mt-6">
+    <h3 className="text-lg font-bold text-slate-900">
+      Opciones de salida
+    </h3>
+
+    <div className="mt-3 flex flex-wrap gap-3">
+      {listing.exit_options.map((item) => (
+        <div
+          key={item}
+          className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700"
+        >
+          {item}
         </div>
+      ))}
+    </div>
+  </div>
+)}
+
+{listing.description && (
+  <div className="mt-6">
+    <h3 className="text-lg font-bold text-slate-900">
+      Descripción
+    </h3>
+
+    <p className="mt-3 whitespace-pre-line leading-7 text-slate-600">
+      {listing.description}
+    </p>
+  </div>
+)}
       </Panel>
       <Panel title="Análisis de inversión INVERZA">
   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
