@@ -1063,69 +1063,163 @@ function toggleExitOption(option) {
     <div className="space-y-6">
       <h1 className="text-4xl font-black text-slate-900">Publicar inmueble</h1>
 
-      <Panel title="Datos básicos">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Field
-  label="Tipo de inmueble"
-  placeholder="Vivienda, terreno, edificio..."
-  onChange={(e) => setNewListing((p) => ({ ...p, type: e.target.value }))}
-/>
-          <Field
-  label="Operación"
-  placeholder="Venta, alquiler, inversor, permuta"
-  onChange={(e) => setNewListing((p) => ({ ...p, operation: e.target.value }))}
-/>
-         <Field
-  label="Provincia"
-  placeholder="Valencia"
-  onChange={(e) => setNewListing((p) => ({ ...p, location: e.target.value }))}
-/> 
-          <Field
-  label="Municipio"
-  placeholder="Valencia"
-  onChange={(e) => setNewListing((p) => ({ ...p, location: e.target.value }))}
-/>
-          <Field
-  label="Zona / ubicación"
-  placeholder="Ruzafa"
-  onChange={(e) => setNewListing((p) => ({ ...p, location: e.target.value }))}
-/>
-          <Field label="M2 vivienda" placeholder="85" />
-          <Field label="M2 parcela" placeholder="120" />
-          <Field label="Unidades" placeholder="1" />
-        </div>
-      </Panel>
+     <Panel title="Datos básicos">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div>
+      <label>Tipo de inmueble</label>
+      <select
+        value={newListing.type}
+        onChange={(e) => updateListing("type", e.target.value)}
+      >
+        {propertyTypes.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
 
-      <Panel title="Precio y condiciones">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Field
-  label="Precio"
-  placeholder="120.000 €"
-  onChange={(e) => setNewListing((p) => ({ ...p, price: e.target.value }))}
-/>
-          <Field label="Estado legal" placeholder="Libre" />
-          <Field label="Cargas" placeholder="Ninguna" />
-          <Field
-            label="Motivo de la venta"
-            placeholder="Cambio de residencia"
-          />
-        </div>
-      </Panel>
+    <div>
+      <label>Operación</label>
+      <select
+        value={newListing.operation}
+        onChange={(e) => updateListing("operation", e.target.value)}
+      >
+        {operations.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
 
-      <Panel title="Opciones de salida">
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {["Venta directa", "Alquiler", "Buscar inversor", "Permuta"].map(
-            (item) => (
-              <button
-                key={item}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 font-semibold text-slate-800 hover:bg-emerald-50 hover:text-emerald-700"
-              >
-                {item}
-              </button>
-            )
-          )}
-        </div>
-      </Panel>
+    <ProvinceSelect
+      value={newListing.province}
+      onChange={(e) => updateListing("province", e.target.value)}
+    />
+
+    <Field
+      label="Municipio"
+      placeholder="Valencia, Alicante, Elche..."
+      onChange={(e) => updateListing("city", e.target.value)}
+    />
+
+    <Field
+      label="Dirección / ubicación"
+      placeholder="Calle, número, urbanización..."
+      onChange={(e) => updateListing("location", e.target.value)}
+    />
+
+    <label style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <input
+        type="checkbox"
+        checked={newListing.hideAddress}
+        onChange={(e) => updateListing("hideAddress", e.target.checked)}
+        style={{ width: "18px" }}
+      />
+      Ocultar dirección exacta al público
+    </label>
+
+    <Field
+      label="Título del anuncio"
+      placeholder="Ej: Piso con alto potencial en Ruzafa"
+      onChange={(e) => updateListing("title", e.target.value)}
+    />
+
+    <Field
+      label="Precio"
+      placeholder="120.000 €"
+      onChange={(e) => updateListing("price", e.target.value)}
+    />
+  </div>
+</Panel>
+
+<Panel title="Características del inmueble">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <Field
+      label="M2 vivienda"
+      placeholder="85"
+      onChange={(e) => updateListing("m2Housing", e.target.value)}
+    />
+
+    <Field
+      label="M2 parcela"
+      placeholder="120"
+      onChange={(e) => updateListing("m2Plot", e.target.value)}
+    />
+
+    <Field
+      label="Unidades"
+      placeholder="1"
+      onChange={(e) => updateListing("units", e.target.value)}
+    />
+
+    <Field
+      label="Habitaciones"
+      placeholder="3"
+      onChange={(e) => updateListing("bedrooms", e.target.value)}
+    />
+
+    <Field
+      label="Baños"
+      placeholder="2"
+      onChange={(e) => updateListing("bathrooms", e.target.value)}
+    />
+
+    <div>
+      <label>Estado del inmueble</label>
+      <select
+        value={newListing.propertyStatus}
+        onChange={(e) => updateListing("propertyStatus", e.target.value)}
+      >
+        {propertyStatuses.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label>Estado legal</label>
+      <select
+        value={newListing.legalStatus}
+        onChange={(e) => updateListing("legalStatus", e.target.value)}
+      >
+        {legalStatuses.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+</Panel>
+
+<Panel title="Opciones de salida">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+    {["Venta directa", "Alquiler", "Buscar inversor", "Permuta"].map((item) => {
+      const active = newListing.exitOptions.includes(item);
+
+      return (
+        <button
+          key={item}
+          type="button"
+          onClick={() => toggleExitOption(item)}
+          className={`rounded-xl border px-4 py-4 font-semibold ${
+            active
+              ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+              : "border-slate-200 bg-slate-50 text-slate-800"
+          }`}
+        >
+          {active ? "✓ " : ""}
+          {item}
+        </button>
+      );
+    })}
+  </div>
+</Panel>
+
+<Panel title="Descripción">
+  <textarea
+    rows="6"
+    placeholder="Describe el inmueble, su estado, oportunidad, potencial de reforma, rentabilidad o motivo de venta..."
+    value={newListing.description}
+    onChange={(e) => updateListing("description", e.target.value)}
+  />
+</Panel>
 <Panel title="Fotos y vídeos">
   <input
     type="file"
