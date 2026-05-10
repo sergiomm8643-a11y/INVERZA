@@ -2176,7 +2176,69 @@ useEffect(() => {
     </div>
   );
 }
+function calculateInvestment(listing) {
+  const parseMoney = (value) =>
+    Number(String(value || "").replace(/[^0-9]/g, "")) || 0;
+
+  const purchasePrice = parseMoney(listing.price);
+  const m2 =
+    Number(listing.m2_housing || listing.m2Housing || listing.m2 || 0) || 0;
+
+  const reformCosts = {
+    "Para entrar a vivir": 0,
+    "Lavado de cara": 200,
+    "Reforma parcial": 400,
+    "Reforma integral": 700,
+    "Construcción nueva": 1800,
+  };
+
+  const status =
+    listing.property_status ||
+    listing.propertyStatus ||
+    "Para entrar a vivir";
+
+  const reformCostPerM2 = reformCosts[status] ?? 0;
+  const worksCost = m2 * reformCostPerM2;
+
+  const purchaseTaxes = purchasePrice * 0.1;
+  const managementCosts = purchasePrice * 0.03;
+
+  const totalInvestment =
+    purchasePrice + purchaseTaxes + managementCosts + worksCost;
+
+  const estimatedSalePricePerM2 =
+    Number(listing.estimated_sale_m2 || listing.estimatedSaleM2 || 0) || 0;
+
+  const estimatedSalePrice =
+    estimatedSalePricePerM2 > 0
+      ? estimatedSalePricePerM2 * m2
+      : 0;
+
+  const estimatedProfit =
+    estimatedSalePrice > 0 ? estimatedSalePrice - totalInvestment : 0;
+
+  const roi =
+    totalInvestment > 0 && estimatedProfit > 0
+      ? (estimatedProfit / totalInvestment) * 100
+      : 0;
+
+  return {
+    purchasePrice,
+    m2,
+    status,
+    reformCostPerM2,
+    worksCost,
+    purchaseTaxes,
+    managementCosts,
+    totalInvestment,
+    estimatedSalePricePerM2,
+    estimatedSalePrice,
+    estimatedProfit,
+    roi,
+  };
+}
   function MyListingDetailPage({ listing, setPage }) {
+   const investment = calculateInvestment(listing || {}); 
   if (!listing) {
     return (
       <div className="space-y-4">
@@ -2246,6 +2308,23 @@ useEffect(() => {
           <MiniMetric label="Publicado" value={listing.createdAt ? new Date(listing.createdAt).toLocaleDateString() : "Hoy"} />
         </div>
       </Panel>
+      <Panel title="Análisis de inversión INVERZA">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <MiniMetric label="Precio compra" value={`${investment.purchasePrice.toLocaleString()} €`} />
+    <MiniMetric label="Impuestos y gastos" value={`${investment.purchaseTaxes.toLocaleString()} €`} />
+    <MiniMetric label="Gestión / varios" value={`${investment.managementCosts.toLocaleString()} €`} />
+
+    <MiniMetric label="Estado inmueble" value={investment.status} />
+    <MiniMetric label="Coste obra €/m²" value={`${investment.reformCostPerM2} €/m²`} />
+    <MiniMetric label="Coste obra total" value={`${investment.worksCost.toLocaleString()} €`} />
+
+    <MiniMetric label="Inversión total" value={`${investment.totalInvestment.toLocaleString()} €`} accent />
+    <MiniMetric label="Venta estimada" value={investment.estimatedSalePrice ? `${investment.estimatedSalePrice.toLocaleString()} €` : "Pendiente valor zona"} />
+    <MiniMetric label="Beneficio estimado" value={investment.estimatedProfit ? `${investment.estimatedProfit.toLocaleString()} €` : "Pendiente"} accent />
+
+    <MiniMetric label="ROI estimado" value={investment.roi ? `${investment.roi.toFixed(1)}%` : "Pendiente"} accent />
+  </div>
+</Panel>
     </div>
   );
 }
