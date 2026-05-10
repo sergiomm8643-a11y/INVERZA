@@ -2335,34 +2335,95 @@ function calculateInvestment(listing) {
   );
 }
 function EditMyListingPage({ listing, listingIndex, setPage }) {
-  const [form, setForm] = useState(
-    listing || {
-      title: "",
-      type: "",
-      operation: "",
-      location: "",
-      price: "",
-      status: "Activo",
-      media: [],
-    }
-  );
+  const [form, setForm] = useState({
+   const propertyTypes = [
+  "Terreno",
+  "Vivienda",
+  "Habitaciones",
+  "Oficinas",
+  "Locales o naves",
+  "Traspasos",
+  "Garajes",
+  "Trasteros",
+  "Edificios",
+  "Vacacionales",
+];
 
+const operations = ["Venta", "Alquiler", "Buscar inversor", "Permuta"];
+const legalStatuses = ["Libre", "Alquilado", "Ocupado ilegalmente"];
+
+const propertyStatuses = [
+  "Para entrar a vivir",
+  "Lavado de cara",
+  "Reforma parcial",
+  "Reforma integral",
+];
+
+function updateForm(key, value) {
+  setForm((p) => ({ ...p, [key]: value }));
+}
+
+function toggleExitOption(option) {
+  setForm((p) => {
+    const exists = (p.exit_options || []).includes(option);
+    return {
+      ...p,
+      exit_options: exists
+        ? p.exit_options.filter((x) => x !== option)
+        : [...(p.exit_options || []), option],
+    };
+  });
+} 
+  title: listing?.title || "",
+  type: listing?.type || "Vivienda",
+  operation: listing?.operation || "Venta",
+  province: listing?.province || "Valencia",
+  city: listing?.city || "",
+  location: listing?.location || "",
+  hide_address: listing?.hide_address || false,
+  price: listing?.price || "",
+  estimated_sale_m2: listing?.estimated_sale_m2 || "",
+  m2_housing: listing?.m2_housing || "",
+  m2_plot: listing?.m2_plot || "",
+  bedrooms: listing?.bedrooms || "",
+  bathrooms: listing?.bathrooms || "",
+  units: listing?.units || "1",
+  legal_status: listing?.legal_status || "Libre",
+  property_status: listing?.property_status || "Para entrar a vivir",
+  exit_options: listing?.exit_options || [],
+  description: listing?.description || "",
+  status: listing?.status || "Activo",
+  media: listing?.media || [],
+});
  async function saveChanges() {
   if (!listing?.id) {
     alert("No se ha encontrado el anuncio.");
     return;
   }
 
-  const payload = {
-    title: form.title,
-    type: form.type,
-    operation: form.operation,
-    location: form.location,
-    price: form.price,
-    status: form.status,
-    media: form.media || [],
-    updated_at: new Date().toISOString(),
-  };
+ const payload = {
+  title: form.title,
+  type: form.type,
+  operation: form.operation,
+  province: form.province,
+  city: form.city,
+  location: form.location,
+  hide_address: form.hide_address,
+  price: form.price,
+  estimated_sale_m2: form.estimated_sale_m2,
+  m2_housing: form.m2_housing,
+  m2_plot: form.m2_plot,
+  bedrooms: form.bedrooms,
+  bathrooms: form.bathrooms,
+  units: form.units,
+  legal_status: form.legal_status,
+  property_status: form.property_status,
+  exit_options: form.exit_options || [],
+  description: form.description,
+  status: form.status,
+  media: form.media || [],
+  updated_at: new Date().toISOString(),
+};
 
   const { error } = await supabase
     .from("listings")
@@ -2387,57 +2448,182 @@ function EditMyListingPage({ listing, listingIndex, setPage }) {
         ← Volver a mis anuncios
       </button>
 
-      <Panel title="Editar anuncio">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Field
-            label="Título"
-            placeholder="Título del anuncio"
-            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-          />
+     <Panel title="Datos básicos">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div>
+      <label>Tipo de inmueble</label>
+      <select
+        value={form.type}
+        onChange={(e) => updateForm("type", e.target.value)}
+      >
+        {propertyTypes.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
 
-          <Field
-            label="Tipo"
-            placeholder={form.type || "Vivienda"}
-            onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
-          />
+    <div>
+      <label>Operación</label>
+      <select
+        value={form.operation}
+        onChange={(e) => updateForm("operation", e.target.value)}
+      >
+        {operations.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
 
-          <Field
-            label="Operación"
-            placeholder={form.operation || "Venta"}
-            onChange={(e) =>
-              setForm((p) => ({ ...p, operation: e.target.value }))
-            }
-          />
+    <ProvinceSelect
+      value={form.province}
+      onChange={(e) => updateForm("province", e.target.value)}
+    />
 
-          <Field
-            label="Ubicación"
-            placeholder={form.location || "Ubicación"}
-            onChange={(e) =>
-              setForm((p) => ({ ...p, location: e.target.value }))
-            }
-          />
+    <Field
+      label="Municipio"
+      placeholder={form.city || "Valencia, Alicante, Elche..."}
+      onChange={(e) => updateForm("city", e.target.value)}
+    />
 
-          <Field
-            label="Precio"
-            placeholder={form.price || "120.000 €"}
-            onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))}
-          />
+    <Field
+      label="Dirección / ubicación"
+      placeholder={form.location || "Calle, número, urbanización..."}
+      onChange={(e) => updateForm("location", e.target.value)}
+    />
 
-          <div>
-            <label>Estado</label>
-            <select
-              value={form.status || "Activo"}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, status: e.target.value }))
-              }
-            >
-              <option>Activo</option>
-              <option>Pausado</option>
-              <option>Vendido</option>
-              <option>Alquilado</option>
-            </select>
-          </div>
-        </div>
+    <label style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <input
+        type="checkbox"
+        checked={form.hide_address}
+        onChange={(e) => updateForm("hide_address", e.target.checked)}
+        style={{ width: "18px" }}
+      />
+      Ocultar dirección exacta al público
+    </label>
+
+    <Field
+      label="Título del anuncio"
+      placeholder={form.title || "Ej: Piso con alto potencial en Ruzafa"}
+      onChange={(e) => updateForm("title", e.target.value)}
+    />
+
+    <Field
+      label="Precio"
+      placeholder={form.price || "120.000 €"}
+      onChange={(e) => updateForm("price", e.target.value)}
+    />
+
+    <Field
+      label="Venta estimada €/m² zona"
+      placeholder={form.estimated_sale_m2 || "3.200"}
+      onChange={(e) => updateForm("estimated_sale_m2", e.target.value)}
+    />
+  </div>
+</Panel>
+
+<Panel title="Características del inmueble">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <Field
+      label="M2 vivienda"
+      placeholder={form.m2_housing || "85"}
+      onChange={(e) => updateForm("m2_housing", e.target.value)}
+    />
+
+    <Field
+      label="M2 parcela"
+      placeholder={form.m2_plot || "120"}
+      onChange={(e) => updateForm("m2_plot", e.target.value)}
+    />
+
+    <Field
+      label="Unidades"
+      placeholder={form.units || "1"}
+      onChange={(e) => updateForm("units", e.target.value)}
+    />
+
+    <Field
+      label="Habitaciones"
+      placeholder={form.bedrooms || "3"}
+      onChange={(e) => updateForm("bedrooms", e.target.value)}
+    />
+
+    <Field
+      label="Baños"
+      placeholder={form.bathrooms || "2"}
+      onChange={(e) => updateForm("bathrooms", e.target.value)}
+    />
+
+    <div>
+      <label>Estado del inmueble</label>
+      <select
+        value={form.property_status}
+        onChange={(e) => updateForm("property_status", e.target.value)}
+      >
+        {propertyStatuses.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label>Estado legal</label>
+      <select
+        value={form.legal_status}
+        onChange={(e) => updateForm("legal_status", e.target.value)}
+      >
+        {legalStatuses.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label>Estado del anuncio</label>
+      <select
+        value={form.status}
+        onChange={(e) => updateForm("status", e.target.value)}
+      >
+        <option>Activo</option>
+        <option>Pausado</option>
+        <option>Vendido</option>
+        <option>Alquilado</option>
+      </select>
+    </div>
+  </div>
+</Panel>
+
+<Panel title="Opciones de salida">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+    {["Venta directa", "Alquiler", "Buscar inversor", "Permuta"].map((item) => {
+      const active = (form.exit_options || []).includes(item);
+
+      return (
+        <button
+          key={item}
+          type="button"
+          onClick={() => toggleExitOption(item)}
+          className={`rounded-xl border px-4 py-4 font-semibold ${
+            active
+              ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+              : "border-slate-200 bg-slate-50 text-slate-800"
+          }`}
+        >
+          {active ? "✓ " : ""}
+          {item}
+        </button>
+      );
+    })}
+  </div>
+</Panel>
+
+<Panel title="Descripción">
+  <textarea
+    rows="6"
+    placeholder="Describe el inmueble, su estado, oportunidad, potencial de reforma, rentabilidad o motivo de venta..."
+    value={form.description}
+    onChange={(e) => updateForm("description", e.target.value)}
+  />
+</Panel>
 
        <div className="mt-6">
   <h3 className="text-xl font-bold">Fotos y vídeos actuales</h3>
