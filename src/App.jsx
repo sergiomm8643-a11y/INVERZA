@@ -123,31 +123,26 @@ export default function App() {
 
     loadRealListings();
   }, []);
-    if (data.session) {
-      setPage("panel");
-    }
-  };
 
-  checkUser();
-}, []);
   function handleRegister() {
-  if (selectedUserType === "investor") {
-    saveInvestorProfile({
-      name: "Test",
-      email: "test@test.com"
-    });
-  } else {
-    setPage("publish");
+    if (selectedUserType === "investor") {
+      saveInvestorProfile({
+        name: "Test",
+        email: "test@test.com",
+      });
+    } else {
+      setPage("publish");
+    }
   }
-}
+
   const [selectedId, setSelectedId] = useState(1);
   const [selectedMyListing, setSelectedMyListing] = useState(null);
   const [editingMyListingIndex, setEditingMyListingIndex] = useState(null);
   const [favorites, setFavorites] = useState([1]);
   const [messages, setMessages] = useState(initialMessages);
   const [chatInput, setChatInput] = useState("");
+
   const [search, setSearch] = useState({
-  const [realListings, setRealListings] = useState([]);  
     operation: "Comprar",
     type: "Vivienda",
     city: "Valencia",
