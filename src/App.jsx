@@ -2953,6 +2953,121 @@ function SettingsPage({ setPage }) {
     </div>
   );
 }
+function TopOpportunitiesPage({
+  listings,
+  setSelectedMyListing,
+  setDetailBackPage,
+  setPage,
+}) {
+  const ranked = [...(listings || [])]
+    .map((item) => {
+      const investment = calculateInvestment(item);
+      return {
+        ...item,
+        investment,
+        roiScore: investment.roi || 0,
+        profitScore: investment.estimatedProfit || 0,
+      };
+    })
+    .sort((a, b) => {
+      if (b.roiScore !== a.roiScore) return b.roiScore - a.roiScore;
+      return b.profitScore - a.profitScore;
+    })
+    .slice(0, 10);
+
+  return (
+    <div className="space-y-6">
+      <button
+        onClick={() => setPage("home")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver al inicio
+      </button>
+
+      <Panel title="Top 10 oportunidades INVERZA">
+        <p className="mb-5 text-slate-600">
+          Ranking automático según inversión total, beneficio estimado y ROI.
+        </p>
+
+        <div className="space-y-4">
+          {ranked.map((item, index) => (
+            <div
+              key={item.id}
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-xl font-black text-white">
+                    #{index + 1}
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">
+                      {item.title ||
+                        `${item.type || "Inmueble"} en ${
+                          item.city || "zona pendiente"
+                        }`}
+                    </h3>
+                    <p className="text-slate-500">
+                      {item.city || item.location || "Ubicación pendiente"}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSelectedMyListing(item);
+                    setDetailBackPage("topOpportunities");
+                    setPage("myListingDetail");
+                  }}
+                  className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white"
+                >
+                  Ver oportunidad
+                </button>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-4">
+                <MiniMetric label="Compra" value={item.price || "-"} />
+
+                <MiniMetric
+                  label="Inversión total"
+                  value={`${item.investment.totalInvestment.toLocaleString()} €`}
+                  accent
+                />
+
+                <MiniMetric
+                  label="Beneficio"
+                  value={
+                    item.investment.estimatedProfit
+                      ? `${item.investment.estimatedProfit.toLocaleString()} €`
+                      : "Pendiente"
+                  }
+                  accent
+                />
+
+                <MiniMetric
+                  label="ROI"
+                  value={
+                    item.investment.roi
+                      ? `${item.investment.roi.toFixed(1)}%`
+                      : "Pendiente"
+                  }
+                  accent
+                />
+              </div>
+            </div>
+          ))}
+
+          {ranked.length === 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+              Todavía no hay oportunidades publicadas.
+            </div>
+          )}
+        </div>
+      </Panel>
+    </div>
+  );
+}
 function MobileNav({ page, setPage }) {
   const items = [
     ["home", "Inicio"],
