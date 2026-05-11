@@ -281,7 +281,7 @@ const [detailBackPage, setDetailBackPage] = useState("home");
             search={search}
             setSearch={setSearch}
             runSearch={runSearch}
-            results={filteredListings}
+            results={realListings}
             openListing={openListing}
             favorites={favorites}
             toggleFavorite={toggleFavorite}
@@ -795,6 +795,43 @@ function ResultsPage({
   showFilters,
   setShowFilters,
 }) {
+  const visibleResults = (results || [])
+  .map((item) => {
+    const investment = calculateInvestment(item);
+    return {
+      ...item,
+      investment,
+      roiScore: investment.roi || 0,
+    };
+  })
+  .filter((item) => {
+    const operationOk =
+      !search.operation ||
+      String(item.operation || "")
+        .toLowerCase()
+        .includes(String(search.operation || "").toLowerCase());
+
+    const typeOk =
+      !search.type ||
+      String(item.type || "")
+        .toLowerCase()
+        .includes(String(search.type || "").toLowerCase());
+
+    const text = `${item.province || ""} ${item.city || ""} ${
+      item.location || ""
+    }`.toLowerCase();
+
+    const cityOk =
+      !search.city ||
+      text.includes(String(search.city || "").toLowerCase());
+
+    const zoneOk =
+      !search.zone ||
+      text.includes(String(search.zone || "").toLowerCase());
+
+    return operationOk && typeOk && cityOk && zoneOk;
+  })
+  .sort((a, b) => b.roiScore - a.roiScore);
   return (
     <div className="space-y-6">
       <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm">
@@ -902,13 +939,13 @@ function ResultsPage({
       )}
 
       <div className="space-y-4">
-        {results.length === 0 && (
+        {visibleResults.length === 0 && (
           <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500 shadow-sm">
             No hay resultados exactos con esta búsqueda todavía.
           </div>
         )}
 
-        {results.map((item) => (
+        {visibleResults.map((item) => (
           <div
             key={item.id}
             className="group rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg"
@@ -2339,7 +2376,7 @@ function calculateInvestment(listing) {
         onClick={() => setPage(detailBackPage || "home")}
         className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
       >
-        ← Volver a mis anuncios
+        ← Volver
       </button>
 {listing.media && listing.media.length > 0 && (
   <Panel title="Galería">
@@ -3014,14 +3051,14 @@ function TopOpportunitiesPage({
                   </div>
                 </div>
 
-                <button
+               <button
                   onClick={() => {
                     setSelectedMyListing(item);
                     setDetailBackPage("topOpportunities");
                     setPage("myListingDetail");
                   }}
                   className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white"
-                >
+                > 
                   Ver oportunidad
                 </button>
               </div>
