@@ -92,6 +92,7 @@ const initialMessages = [
 export default function App() {
   const [page, setPage] = useState("home");
   const [realListings, setRealListings] = useState([]);
+  
 
   useEffect(() => {
     const checkUser = async () => {
@@ -141,7 +142,7 @@ export default function App() {
   const [favorites, setFavorites] = useState([1]);
   const [messages, setMessages] = useState(initialMessages);
   const [chatInput, setChatInput] = useState("");
-
+const [detailBackPage, setDetailBackPage] = useState("home");
   const [search, setSearch] = useState({
     operation: "Comprar",
     type: "Vivienda",
@@ -271,6 +272,7 @@ export default function App() {
             setPage={setPage}
             investorProfile={investorProfile}
             setSelectedMyListing={setSelectedMyListing}
+            setDetailBackPage={setDetailBackPage}
           />
         )}
 
@@ -350,9 +352,10 @@ export default function App() {
 )}
        {page === "myListingDetail" && (
   <MyListingDetailPage
-    listing={selectedMyListing}
-    setPage={setPage}
-  />
+  listing={selectedMyListing}
+  setPage={setPage}
+  detailBackPage={detailBackPage}
+/>
 )} 
        {page === "editMyListing" && (
   <EditMyListingPage
@@ -429,6 +432,7 @@ function HomePage({
   setPage,
   investorProfile,
   setSelectedMyListing,
+  setDetailBackPage,
 }) {
   const personalized = [...featured]
   .filter((item) => {
@@ -700,8 +704,9 @@ function HomePage({
   <div className="mt-5 flex justify-end">
     <button
       onClick={() => {
-        setSelectedMyListing(item);
-        setPage("myListingDetail");
+       setSelectedMyListing(item);
+setDetailBackPage("home");
+setPage("myListingDetail"); 
       }}
       className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white shadow-sm transition hover:bg-emerald-600"
     >
@@ -2307,13 +2312,13 @@ function calculateInvestment(listing) {
     roi,
   };
 }
-  function MyListingDetailPage({ listing, setPage }) {
+  function MyListingDetailPage({ listing, setPage, detailBackPage = "home" }) {
    const investment = calculateInvestment(listing || {}); 
   if (!listing) {
     return (
       <div className="space-y-4">
-        <button onClick={() => setPage("myListings")}>
-          ← Volver a mis anuncios
+        <button onClick={() => setPage(detailBackPage)}>
+          ← Volver
         </button>
         <p>No se ha encontrado el anuncio.</p>
       </div>
