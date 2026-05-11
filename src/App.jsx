@@ -795,9 +795,21 @@ function ResultsPage({
   showFilters,
   setShowFilters,
 }) {
-  const visibleResults = (results || [])
+ function normalizeOperation(value) {
+  const v = String(value || "").toLowerCase();
+
+  if (["comprar", "venta", "vender"].includes(v)) return "venta";
+  if (["alquilar", "alquiler"].includes(v)) return "alquiler";
+  if (["invertir", "buscar inversor", "inversor"].includes(v)) return "inversion";
+  if (["permutar", "permuta"].includes(v)) return "permuta";
+
+  return v;
+}
+
+const visibleResults = (results || [])
   .map((item) => {
     const investment = calculateInvestment(item);
+
     return {
       ...item,
       investment,
@@ -805,20 +817,11 @@ function ResultsPage({
     };
   })
   .filter((item) => {
-   const searchOperation = String(search.operation || "").toLowerCase();
-const itemOperation = String(item.operation || "").toLowerCase();
+    const operationOk =
+      !search.operation ||
+      normalizeOperation(item.operation) ===
+        normalizeOperation(search.operation);
 
-const operationOk =
-  !search.operation ||
-  itemOperation === searchOperation ||
-  (searchOperation === "comprar" && itemOperation === "venta") ||
-  (searchOperation === "venta" && itemOperation === "comprar") ||
-  (searchOperation === "alquilar" && itemOperation === "alquiler") ||
-  (searchOperation === "alquiler" && itemOperation === "alquilar") ||
-  (searchOperation === "invertir" && itemOperation === "buscar inversor") ||
-  (searchOperation === "buscar inversor" && itemOperation === "invertir") ||
-  (searchOperation === "permutar" && itemOperation === "permuta") ||
-  (searchOperation === "permuta" && itemOperation === "permutar");
     const typeOk =
       !search.type ||
       String(item.type || "")
