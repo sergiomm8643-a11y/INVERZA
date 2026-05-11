@@ -812,7 +812,13 @@ const operationOk =
   !search.operation ||
   itemOperation === searchOperation ||
   (searchOperation === "comprar" && itemOperation === "venta") ||
-  (searchOperation === "venta" && itemOperation === "comprar");
+  (searchOperation === "venta" && itemOperation === "comprar") ||
+  (searchOperation === "alquilar" && itemOperation === "alquiler") ||
+  (searchOperation === "alquiler" && itemOperation === "alquilar") ||
+  (searchOperation === "invertir" && itemOperation === "buscar inversor") ||
+  (searchOperation === "buscar inversor" && itemOperation === "invertir") ||
+  (searchOperation === "permutar" && itemOperation === "permuta") ||
+  (searchOperation === "permuta" && itemOperation === "permutar");
     const typeOk =
       !search.type ||
       String(item.type || "")
