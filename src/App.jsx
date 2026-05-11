@@ -435,10 +435,10 @@ function HomePage({
       !investorProfile.budget || price <= Number(investorProfile.budget);
     const roiOk = !investorProfile.roi || roi >= Number(investorProfile.roi);
     const zoneOk =
-      !investorProfile.zones ||
-      item.city
-        .toLowerCase()
-        .includes(String(investorProfile.zones).toLowerCase());
+  !investorProfile.zones ||
+  String(item.city || "")
+    .toLowerCase()
+    .includes(String(investorProfile.zones || "").toLowerCase());
     return budgetOk && roiOk && zoneOk;
   });
   const stats = [
@@ -649,10 +649,10 @@ function HomePage({
                   <MiniMetric label="Beneficio" value={item.profit} accent />
                   <MiniMetric label="Demanda" value={item.demand} />
                   <MiniMetric
-                    label="Match"
-                    value={`${item.matchScore}%`}
-                    accent
-                  />
+  label="Match"
+  value={`${item.matchScore ?? 80}%`}
+  accent
+/>
                   <MiniMetric
                     label="Match"
                     value={`${item.matchScore ?? 82}%`}
@@ -871,7 +871,7 @@ function ResultsPage({
                     <div className="mt-3 flex gap-2 text-sm flex-wrap">
                       <Badge text={item.type} />
                       <Badge text={item.operation} />
-                      <Badge text={item.legalStatus} />
+                     <Badge text={item.legalStatus || item.legal_status || "Libre"} />
                     </div>
                   </div>
                   <div className="text-right">
