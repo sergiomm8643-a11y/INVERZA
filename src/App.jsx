@@ -357,6 +357,14 @@ const [detailBackPage, setDetailBackPage] = useState("home");
   detailBackPage={detailBackPage}
 />
 )} 
+        {page === "topOpportunities" && (
+  <TopOpportunitiesPage
+    listings={realListings}
+    setSelectedMyListing={setSelectedMyListing}
+    setDetailBackPage={setDetailBackPage}
+    setPage={setPage}
+  />
+)}
        {page === "editMyListing" && (
   <EditMyListingPage
     listing={selectedMyListing}
@@ -645,7 +653,7 @@ function HomePage({
               </h2>
             </div>
             <button
-              onClick={() => setPage("results")}
+              onClick={() => setPage("topOpportunities")}
               className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
             >
               Ver todo
