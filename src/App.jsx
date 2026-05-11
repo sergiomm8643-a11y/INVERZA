@@ -428,18 +428,47 @@ function HomePage({
   setPage,
   investorProfile,
 }) {
-  const personalized = featured.filter((item) => {
-    const price = parseInt(String(item.price).replace(/[^0-9]/g, "")) || 0;
-    const roi = parseFloat(String(item.roi).replace(",", ".")) || 0;
+  const personalized = [...featured]
+  .filter((item) => {
+    const investment = calculateInvestment(item);
+
+    const price = investment.purchasePrice || 0;
+    const roi = investment.roi || 0;
+
     const budgetOk =
-      !investorProfile.budget || price <= Number(investorProfile.budget);
-    const roiOk = !investorProfile.roi || roi >= Number(investorProfile.roi);
+      !investorProfile.budget ||
+      price <= Number(investorProfile.budget);
+
+    const roiOk =
+      !investorProfile.roi ||
+      roi >= Number(investorProfile.roi);
+
     const zoneOk =
-  !investorProfile.zones ||
-  String(item.city || "")
-    .toLowerCase()
-    .includes(String(investorProfile.zones || "").toLowerCase());
+      !investorProfile.zones ||
+      String(item.city || "")
+        .toLowerCase()
+        .includes(
+          String(investorProfile.zones || "").toLowerCase()
+        );
+
     return budgetOk && roiOk && zoneOk;
+  })
+  .map((item) => {
+    const investment = calculateInvestment(item);
+
+    return {
+      ...item,
+      investment,
+      roiScore: investment.roi || 0,
+      profitScore: investment.estimatedProfit || 0,
+    };
+  })
+  .sort((a, b) => {
+    if (b.roiScore !== a.roiScore) {
+      return b.roiScore - a.roiScore;
+    }
+
+    return b.profitScore - a.profitScore;
   });
   const stats = [
     { label: "Oportunidades activas", value: "1.284" },
@@ -633,7 +662,7 @@ function HomePage({
                     </div>
                   </div>
                   <div className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">
-                    ROI {item.roi}
+                    ROI {item.investment?.roi ? `${item.investment.roi.toFixed(1)}%` : item.roi || "Pendiente"}
                   </div>
                 </div>
 
@@ -646,7 +675,15 @@ function HomePage({
                 <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
                   <MiniMetric label="Compra" value={item.price} />
                   <MiniMetric label="Coste total" value={item.totalCost} />
-                  <MiniMetric label="Beneficio" value={item.profit} accent />
+                 <MiniMetric
+  label="Beneficio"
+  value={
+    item.investment?.estimatedProfit
+      ? `${item.investment.estimatedProfit.toLocaleString()} €`
+      : item.profit || "Pendiente"
+  }
+  accent
+/>
                   <MiniMetric label="Demanda" value={item.demand} />
                   <MiniMetric
   label="Match"
