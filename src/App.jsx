@@ -187,7 +187,7 @@ const [detailBackPage, setDetailBackPage] = useState("home");
           Flip: ["Comprar", "Invertir"],
           Alquiler: ["Alquilar"],
           Promoción: ["Invertir"],
-          Mixto: ["Comprar", "Alquilar", "Invertir", "Permutar"],
+          Mixto: ["Venta", "Alquiler", "Buscar inversor", "Permuta"],
         };
         const strategyOk = (
           strategyMap[investorProfile.strategy] || []
@@ -805,12 +805,14 @@ function ResultsPage({
     };
   })
   .filter((item) => {
-    const operationOk =
-      !search.operation ||
-      String(item.operation || "")
-        .toLowerCase()
-        .includes(String(search.operation || "").toLowerCase());
+   const searchOperation = String(search.operation || "").toLowerCase();
+const itemOperation = String(item.operation || "").toLowerCase();
 
+const operationOk =
+  !search.operation ||
+  itemOperation === searchOperation ||
+  (searchOperation === "comprar" && itemOperation === "venta") ||
+  (searchOperation === "venta" && itemOperation === "comprar");
     const typeOk =
       !search.type ||
       String(item.type || "")
