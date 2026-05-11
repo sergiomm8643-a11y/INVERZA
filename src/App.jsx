@@ -267,7 +267,7 @@ export default function App() {
             setSearch={setSearch}
             runSearch={runSearch}
             openListing={openListing}
-            featured={listings}
+           featured={realListings.length ? realListings : listings}
             setPage={setPage}
             investorProfile={investorProfile}
           />
