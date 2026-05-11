@@ -2336,7 +2336,7 @@ function calculateInvestment(listing) {
   return (
     <div className="space-y-6">
       <button
-        onClick={() => setPage("myListings")}
+        onClick={() => setPage(detailBackPage || "home")}
         className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
       >
         ← Volver a mis anuncios
