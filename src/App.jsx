@@ -91,10 +91,38 @@ const initialMessages = [
 
 export default function App() {
   const [page, setPage] = useState("home");
-  useEffect(() => {
-  const checkUser = async () => {
-    const { data } = await supabase.auth.getSession();
+  const [realListings, setRealListings] = useState([]);
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (data.session) {
+        setPage("panel");
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    async function loadRealListings() {
+      const { data, error } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("status", "Activo")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.log("Error cargando anuncios reales:", error.message);
+        return;
+      }
+
+      setRealListings(data || []);
+    }
+
+    loadRealListings();
+  }, []);
     if (data.session) {
       setPage("panel");
     }
@@ -119,6 +147,7 @@ export default function App() {
   const [messages, setMessages] = useState(initialMessages);
   const [chatInput, setChatInput] = useState("");
   const [search, setSearch] = useState({
+  const [realListings, setRealListings] = useState([]);  
     operation: "Comprar",
     type: "Vivienda",
     city: "Valencia",
