@@ -270,6 +270,7 @@ export default function App() {
            featured={realListings.length ? realListings : listings}
             setPage={setPage}
             investorProfile={investorProfile}
+            setSelectedMyListing={setSelectedMyListing}
           />
         )}
 
@@ -427,6 +428,7 @@ function HomePage({
   featured,
   setPage,
   investorProfile,
+  setSelectedMyListing,
 }) {
   const personalized = [...featured]
   .filter((item) => {
@@ -647,66 +649,66 @@ function HomePage({
           </div>
 
           <div className="mt-6 grid gap-4">
-            {(personalized.length ? personalized : featured).map((item) => (
-              <div
-                key={item.id}
-                className="group rounded-[26px] border border-slate-200 bg-gradient-to-r from-white to-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">
-                      {item.title}
-                    </h3>
-                    <div className="mt-1 text-sm text-slate-500">
-                      {item.location}
-                    </div>
-                  </div>
-                  <div className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">
-                    ROI {item.investment?.roi ? `${item.investment.roi.toFixed(1)}%` : item.roi || "Pendiente"}
-                  </div>
-                </div>
+            {(personalized.length ? personalized : featured).slice(0, 3).map((item, index) => {
+  const investment = item.investment || calculateInvestment(item);
 
-                <div className="mt-4 flex flex-wrap gap-2 text-sm">
-                  <Badge text={item.type} />
-                  <Badge text={item.operation} />
-                  <Badge text={item.legalStatus} />
-                </div>
+  return (
+             <div
+  key={item.id}
+  className="group rounded-[26px] border border-slate-200 bg-gradient-to-r from-white to-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg"
+>
+  <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex items-center gap-4">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500 text-xl font-black text-white">
+        #{index + 1}
+      </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
-                  <MiniMetric label="Compra" value={item.price} />
-                  <MiniMetric label="Coste total" value={item.totalCost} />
-                 <MiniMetric
-  label="Beneficio"
-  value={
-    item.investment?.estimatedProfit
-      ? `${item.investment.estimatedProfit.toLocaleString()} €`
-      : item.profit || "Pendiente"
-  }
-  accent
-/>
-                  <MiniMetric label="Demanda" value={item.demand} />
-                  <MiniMetric
-  label="Match"
-  value={`${item.matchScore ?? 80}%`}
-  accent
-/>
-                  <MiniMetric
-                    label="Match"
-                    value={`${item.matchScore ?? 82}%`}
-                    accent
-                  />
-                </div>
+      <div>
+        <h3 className="text-xl font-bold text-slate-900">
+          {item.title || `${item.type || "Inmueble"} en ${item.city || "zona pendiente"}`}
+        </h3>
+        <div className="mt-1 text-sm text-slate-500">
+          {item.city || item.location || "Ubicación pendiente"}
+        </div>
+      </div>
+    </div>
 
-                <div className="mt-5 flex items-center justify-between gap-3">
-                  <button className="text-sm text-slate-500">Guardar</button>
-                  <button
-                    onClick={() => openListing(item.id)}
-                    className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white shadow-sm transition hover:bg-emerald-600"
-                  >
-                    Ver oportunidad
-                  </button>
-                </div>
-              </div>
+    <div className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">
+      Radar INVERZA
+    </div>
+  </div>
+
+  <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+    <MiniMetric
+      label="Valor compra"
+      value={item.price || `${investment.purchasePrice.toLocaleString()} €`}
+    />
+
+    <MiniMetric
+      label="Coste total"
+      value={`${investment.totalInvestment.toLocaleString()} €`}
+      accent
+    />
+
+    <MiniMetric
+      label="ROI"
+      value={investment.roi ? `${investment.roi.toFixed(1)}%` : "Pendiente"}
+      accent
+    />
+  </div>
+
+  <div className="mt-5 flex justify-end">
+    <button
+      onClick={() => {
+        setSelectedMyListing(item);
+        setPage("myListingDetail");
+      }}
+      className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white shadow-sm transition hover:bg-emerald-600"
+    >
+      Ver oportunidad
+    </button>
+  </div>
+</div>
             ))}
           </div>
         </div>
