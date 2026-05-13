@@ -143,12 +143,12 @@ export default function App() {
   const [messages, setMessages] = useState(initialMessages);
   const [chatInput, setChatInput] = useState("");
 const [detailBackPage, setDetailBackPage] = useState("home");
-  const [search, setSearch] = useState({
-    operation: "Comprar",
-    type: "Vivienda",
-    city: "Valencia",
-    zone: "",
-  });
+ const [search, setSearch] = useState({
+  operation: "Comprar",
+  type: "Vivienda",
+  location: "",
+  zone: "",
+});
   const [showFilters, setShowFilters] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState("seller");
   const [investorProfile, setInvestorProfile] = useState(() => {
@@ -587,16 +587,7 @@ function HomePage({
                 </select>
               </SearchField>
 
-              <SearchField label="Población">
-                <input
-                  value={search.city}
-                  onChange={(e) =>
-                    setSearch((p) => ({ ...p, city: e.target.value }))
-                  }
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
-                  placeholder="Valencia, Alicante, Elche..."
-                />
-              </SearchField>
+             
 
               <SearchField label="Ubicación / zona">
                 <input
@@ -828,19 +819,17 @@ const visibleResults = (results || [])
         .toLowerCase()
         .includes(String(search.type || "").toLowerCase());
 
-    const text = `${item.province || ""} ${item.city || ""} ${
-      item.location || ""
-    }`.toLowerCase();
+    const locationText = `${item.province || ""} ${item.city || ""} ${
+  item.location || ""
+}`.toLowerCase();
 
-    const cityOk =
-      !search.city ||
-      text.includes(String(search.city || "").toLowerCase());
+const locationOk =
+  !search.location ||
+  locationText.includes(
+    String(search.location || "").toLowerCase()
+  );
 
-    const zoneOk =
-      !search.zone ||
-      text.includes(String(search.zone || "").toLowerCase());
-
-    return operationOk && typeOk && cityOk && zoneOk;
+return operationOk && typeOk && locationOk;
   })
   .sort((a, b) => b.roiScore - a.roiScore);
   return (
@@ -905,9 +894,9 @@ const visibleResults = (results || [])
           <div className="mt-2 text-lg text-slate-600">
             Resultados para{" "}
             <span className="font-bold text-slate-900">
-              {search.operation} {search.type} en{" "}
-              {search.city || "todas las zonas"}
-            </span>
+  {search.operation} {search.type} en{" "}
+  {search.location || "todas las ubicaciones"}
+</span>
           </div>
         </div>
         <div className="flex gap-3">
