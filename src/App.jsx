@@ -1855,6 +1855,38 @@ function SearchField({ label, children }) {
     </div>
   );
 }
+function LocationSearch({ value, onChange }) {
+  const locations = [
+    "Picanya, Valencia",
+    "Picassent, Valencia",
+    "Valencia, Valencia",
+    "Ruzafa, Valencia",
+    "Torrent, Valencia",
+    "Paterna, Valencia",
+    "Alicante, Alicante",
+    "Elche, Alicante",
+    "Madrid, Madrid",
+    "Barcelona, Barcelona",
+  ];
+
+  return (
+    <SearchField label="Ubicación">
+      <input
+        list="locations-list"
+        value={value || ""}
+        onChange={onChange}
+        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
+        placeholder="Picanya, Valencia · Valencia, Valencia..."
+      />
+
+      <datalist id="locations-list">
+        {locations.map((location) => (
+          <option key={location} value={location} />
+        ))}
+      </datalist>
+    </SearchField>
+  );
+}
 
 function Field({ label, placeholder, onChange, type = "text" }) {
   return (
