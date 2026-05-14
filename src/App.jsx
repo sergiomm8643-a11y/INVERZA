@@ -1863,26 +1863,74 @@ function SearchField({ label, children }) {
   );
 }
 function LocationSearch({ value, onChange }) {
-  const locations = [
-    "Picanya, Valencia",
-    "Picassent, Valencia",
-    "Valencia, Valencia",
-    "Ruzafa, Valencia",
-    "Torrent, Valencia",
-    "Paterna, Valencia",
-    "Alicante, Alicante",
-    "Elche, Alicante",
-    "Madrid, Madrid",
-    "Barcelona, Barcelona",
-  ];
+  const [suggestions, setSuggestions] = useState([]);
+
+  async function handleSearch(text) {
+    onChange({
+      target: {
+        value: text,
+      },
+    });
+
+    if (!text || text.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("locations_es")
+      .select("city, province")
+      .ilike("search_text", `%${text.toLowerCase()}%`)
+      .limit(8);
+
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+
+    setSuggestions(data || []);
+  }
 
   return (
-    <LocationSearch
-  value={search.location}
-  onChange={(e) =>
-    setSearch((p) => ({ ...p, location: e.target.value }))
-  }
-/>
+    <div className="relative">
+      <input
+        value={value || ""}
+        onChange={(e) => handleSearch(e.target.value)}
+        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
+        placeholder="Picanya, Valencia · Madrid, Madrid..."
+      />
+
+      {suggestions.length > 0 && (
+        <div className="absolute z-50 mt-2 w-full rounded-2xl border border-slate-200 bg-white shadow-xl">
+          {suggestions.map((item, index) => (
+            <button
+              key={`${item.city}-${index}`}
+              type="button"
+              onClick={() => {
+                onChange({
+                  target: {
+                    value: `${item.city}, ${item.province}`,
+                  },
+                });
+
+                setSuggestions([]);
+              }}
+              className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-slate-50"
+            >
+              <div>
+                <div className="font-semibold text-slate-900">
+                  {item.city}
+                </div>
+
+                <div className="text-sm text-slate-500">
+                  {item.province}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
