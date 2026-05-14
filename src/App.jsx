@@ -1890,40 +1890,51 @@ function LocationSearch({ value, onChange }) {
         placeholder="Picanya, Valencia · Madrid, Madrid..."
       />
 
-      {suggestions.length > 0 && (
-        <div className="absolute z-50 mt-2 w-full rounded-2xl border border-slate-200 bg-white shadow-xl">
-          {suggestions.map((item, index) => (
-            <button
-              key={`${item.city}-${index}`}
-              type="button"
-              onClick={() => {
-                onChange({
-                  target: {
-                    value: `${item.city}, ${item.province}`,
-                  },
-                });
-
-                setSuggestions([]);
-              }}
-              className="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-slate-50"
-            >
-              <div>
-                <div className="font-semibold text-slate-900">
-                  {item.city}
-                </div>
-
-                <div className="text-sm text-slate-500">
-                  {item.province}
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
+     {suggestions.length > 0 && (
+  <div
+    style={{
+      position: "absolute",
+      top: "52px",
+      left: 0,
+      right: 0,
+      zIndex: 9999,
+      background: "white",
+      border: "1px solid #dbe7df",
+      borderRadius: "14px",
+      boxShadow: "0 12px 30px rgba(15,23,42,0.12)",
+      overflow: "hidden",
+      maxHeight: "220px",
+      overflowY: "auto",
+    }}
+  >
+    {suggestions.map((item, index) => (
+      <button
+        key={`${item.city}-${index}`}
+        type="button"
+        onClick={() => {
+          onChange({
+            target: {
+              value: `${item.city}, ${item.province}`,
+            },
+          });
+          setSuggestions([]);
+        }}
+        style={{
+          width: "100%",
+          display: "block",
+          padding: "10px 14px",
+          textAlign: "left",
+          border: 0,
+          background: "white",
+          fontSize: "14px",
+          color: "#0f172a",
+        }}
+      >
+        {item.city}, {item.province}
+      </button>
+    ))}
+  </div>
+)}
 function Field({ label, placeholder, onChange, type = "text" }) {
   return (
     <div>
@@ -1942,7 +1953,7 @@ function PasswordField({ label, showPassword, setShowPassword, onChange }) {
   return (
     <div>
       <label className="mb-2 block text-sm text-slate-600">{label}</label>
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative", width: "100%" }}>
         <input
           type={showPassword ? "text" : "password"}
           onChange={onChange}
