@@ -866,12 +866,24 @@ return operationOk && typeOk && locationOk;
             ))}
           </select>
         
-           <LocationSearch
-  value={search.location}
+          <input
+  list="locations-list"
+  value={search.location || ""}
   onChange={(e) =>
     setSearch((p) => ({ ...p, location: e.target.value }))
   }
+  className="rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
+  placeholder="Ubicación"
 />
+
+<datalist id="locations-list">
+  <option value="Picanya, Valencia" />
+  <option value="Picassent, Valencia" />
+  <option value="Valencia, Valencia" />
+  <option value="Ruzafa, Valencia" />
+  <option value="Torrent, Valencia" />
+  <option value="Paterna, Valencia" />
+</datalist>
           <button
             onClick={() => runSearch()}
             className="rounded-2xl bg-emerald-500 font-bold text-white shadow-sm transition hover:bg-emerald-600"
