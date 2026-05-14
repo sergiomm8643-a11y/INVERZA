@@ -1882,7 +1882,7 @@ function LocationSearch({ value, onChange }) {
   }
 
   return (
-    <div className="relative">
+    <div style={{ position: "relative", width: "100%" }}>
       <input
         value={value || ""}
         onChange={(e) => handleSearch(e.target.value)}
@@ -1935,6 +1935,9 @@ function LocationSearch({ value, onChange }) {
     ))}
   </div>
 )}
+    </div>
+  );
+}      
 function Field({ label, placeholder, onChange, type = "text" }) {
   return (
     <div>
@@ -1953,7 +1956,7 @@ function PasswordField({ label, showPassword, setShowPassword, onChange }) {
   return (
     <div>
       <label className="mb-2 block text-sm text-slate-600">{label}</label>
-      <div style={{ position: "relative", width: "100%" }}>
+     <div style={{ position: "relative" }}> 
         <input
           type={showPassword ? "text" : "password"}
           onChange={onChange}
