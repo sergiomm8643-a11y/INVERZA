@@ -866,17 +866,12 @@ return operationOk && typeOk && locationOk;
             ))}
           </select>
           <input
-            value={search.city}
-            onChange={(e) => setSearch((p) => ({ ...p, city: e.target.value }))}
-            className="rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
-            placeholder="Población"
-          />
-          <input
-            value={search.zone}
-            onChange={(e) => setSearch((p) => ({ ...p, zone: e.target.value }))}
-            className="rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
-            placeholder="Zona"
-          />
+           <LocationSearch
+  value={search.location}
+  onChange={(e) =>
+    setSearch((p) => ({ ...p, location: e.target.value }))
+  }
+/>
           <button
             onClick={() => runSearch()}
             className="rounded-2xl bg-emerald-500 font-bold text-white shadow-sm transition hover:bg-emerald-600"
