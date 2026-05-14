@@ -867,11 +867,12 @@ return operationOk && typeOk && locationOk;
           </select>
         
           <input
-  list="locations-list"
-  value={search.location || ""}
+  <LocationSearch
+  value={search.location}
   onChange={(e) =>
     setSearch((p) => ({ ...p, location: e.target.value }))
   }
+/>
   className="rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
   placeholder="Ubicación"
 />
