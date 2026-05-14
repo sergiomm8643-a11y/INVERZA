@@ -866,7 +866,7 @@ return operationOk && typeOk && locationOk;
             ))}
           </select>
         
-          <input
+          
   <LocationSearch
   value={search.location}
   onChange={(e) =>
