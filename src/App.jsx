@@ -589,16 +589,15 @@ function HomePage({
 
              
 
-              <SearchField label="Ubicación / zona">
-                <input
-                  value={search.zone}
-                  onChange={(e) =>
-                    setSearch((p) => ({ ...p, zone: e.target.value }))
-                  }
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
-                  placeholder="Ruzafa, Centro, Playa..."
-                />
-              </SearchField>
+              <LocationSearch
+  value={search.location}
+  onChange={(e) =>
+    setSearch((p) => ({
+      ...p,
+      location: e.target.value,
+    }))
+  }
+/>
 
               <SearchField label="Precio máximo">
                 <input
