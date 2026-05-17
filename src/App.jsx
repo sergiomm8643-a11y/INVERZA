@@ -3209,6 +3209,103 @@ function TopOpportunitiesPage({
     </div>
   );
 }
+function LegalPage({ setPage }) {
+  return (
+    <LegalLayout title="Aviso legal" setPage={setPage}>
+      <p>
+        Este sitio web es titularidad de INVERZA. La plataforma permite publicar,
+        consultar y analizar oportunidades inmobiliarias.
+      </p>
+      <p>
+        El usuario se compromete a utilizar la plataforma conforme a la ley, la
+        buena fe y las condiciones de uso.
+      </p>
+      <p>
+        INVERZA no garantiza la veracidad de la información publicada por terceros.
+        Cada anunciante es responsable de los datos, imágenes y condiciones de sus
+        anuncios.
+      </p>
+    </LegalLayout>
+  );
+}
+
+function PrivacyPage({ setPage }) {
+  return (
+    <LegalLayout title="Política de privacidad" setPage={setPage}>
+      <p>
+        INVERZA trata los datos personales necesarios para gestionar cuentas,
+        anuncios, contactos, favoritos, búsquedas, comunicaciones y servicios de la
+        plataforma.
+      </p>
+      <p>
+        Los datos pueden incluir nombre, email, teléfono, perfil de usuario,
+        preferencias de búsqueda, anuncios publicados y comunicaciones realizadas.
+      </p>
+      <p>
+        El usuario puede solicitar acceso, rectificación, supresión, oposición,
+        limitación y portabilidad de sus datos.
+      </p>
+    </LegalLayout>
+  );
+}
+
+function CookiesPage({ setPage }) {
+  return (
+    <LegalLayout title="Política de cookies" setPage={setPage}>
+      <p>
+        INVERZA utiliza cookies técnicas necesarias para el funcionamiento de la
+        plataforma, como sesión de usuario, seguridad y preferencias básicas.
+      </p>
+      <p>
+        También podrán utilizarse cookies de análisis o marketing si el usuario las
+        acepta expresamente.
+      </p>
+      <p>
+        Puedes configurar o rechazar las cookies no necesarias desde el banner de
+        cookies.
+      </p>
+    </LegalLayout>
+  );
+}
+
+function TermsPage({ setPage }) {
+  return (
+    <LegalLayout title="Términos y condiciones" setPage={setPage}>
+      <p>
+        El uso de INVERZA implica la aceptación de estas condiciones. Los usuarios
+        pueden registrarse como anunciantes, inversores o compradores.
+      </p>
+      <p>
+        Los anunciantes son responsables de que la información publicada sea real,
+        actualizada y legalmente correcta.
+      </p>
+      <p>
+        Los cálculos de rentabilidad, ROI, costes y beneficios son estimaciones
+        orientativas y no constituyen asesoramiento financiero, fiscal, legal o
+        inmobiliario profesional.
+      </p>
+    </LegalLayout>
+  );
+}
+
+function LegalLayout({ title, children, setPage }) {
+  return (
+    <div className="mx-auto max-w-4xl space-y-6 rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm">
+      <button
+        onClick={() => setPage("home")}
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+      >
+        ← Volver al inicio
+      </button>
+
+      <h1 className="text-4xl font-black text-slate-900">{title}</h1>
+
+      <div className="space-y-4 leading-8 text-slate-600">
+        {children}
+      </div>
+    </div>
+  );
+}
 function MobileNav({ page, setPage }) {
   const items = [
     ["home", "Inicio"],
