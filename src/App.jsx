@@ -343,6 +343,10 @@ const [detailBackPage, setDetailBackPage] = useState("home");
        {page === "editProfile" && (
   <EditProfilePage setPage={setPage} />
 )} 
+        {page === "privacy" && <PrivacyPage setPage={setPage} />}
+{page === "cookies" && <CookiesPage setPage={setPage} />}
+{page === "legal" && <LegalPage setPage={setPage} />}
+{page === "terms" && <TermsPage setPage={setPage} />}
        {page === "myListings" && (
  <MyListingsPage
   setPage={setPage}
