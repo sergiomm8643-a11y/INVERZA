@@ -380,6 +380,25 @@ const [detailBackPage, setDetailBackPage] = useState("home");
   <LoginPage setPage={setPage} />
 )}
       </main>
+      <footer className="mt-16 border-t border-slate-200 bg-white px-6 py-8">
+  <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
+    <button onClick={() => setPage("privacy")}>
+      Política de privacidad
+    </button>
+
+    <button onClick={() => setPage("cookies")}>
+      Política de cookies
+    </button>
+
+    <button onClick={() => setPage("legal")}>
+      Aviso legal
+    </button>
+
+    <button onClick={() => setPage("terms")}>
+      Términos y condiciones
+    </button>
+  </div>
+</footer>
 
       <MobileNav page={page} setPage={setPage} />
     </div>
