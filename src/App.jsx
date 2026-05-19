@@ -152,6 +152,9 @@ const [detailBackPage, setDetailBackPage] = useState("home");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState("seller");
   const [investorProfile, setInvestorProfile] = useState(() => {
+    const [cookieConsent, setCookieConsent] = useState(() => {
+  return localStorage.getItem("cookieConsent");
+});
     const saved = localStorage.getItem("investorProfile");
     return saved
       ? JSON.parse(saved)
