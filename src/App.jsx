@@ -404,6 +404,9 @@ const [detailBackPage, setDetailBackPage] = useState("home");
 </footer>
 
       <MobileNav page={page} setPage={setPage} />
+      {!cookieConsent && (
+  <CookieBanner setCookieConsent={setCookieConsent} setPage={setPage} />
+)}
     </div>
   );
 }
