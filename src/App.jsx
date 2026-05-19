@@ -3359,8 +3359,10 @@ function CookieBanner({ setCookieConsent, setPage }) {
         </button>
       </div>
     </div>
-  </div>
+    </div>
 );
+}
+
 function MobileNav({ page, setPage }) {
   const items = [
     ["home", "Inicio"],
