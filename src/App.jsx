@@ -3312,6 +3312,56 @@ function LegalLayout({ title, children, setPage }) {
     </div>
   );
 }
+function CookieBanner({ setCookieConsent, setPage }) {
+  function acceptCookies() {
+    localStorage.setItem("cookieConsent", "accepted");
+    setCookieConsent("accepted");
+  }
+
+  function rejectCookies() {
+    localStorage.setItem("cookieConsent", "rejected");
+    setCookieConsent("rejected");
+  }
+
+  return (
+    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h3 className="text-lg font-black text-slate-900">
+            Configuración de cookies
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Usamos cookies técnicas necesarias y, con tu consentimiento, cookies
+            de análisis para mejorar INVERZA.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setPage("cookies")}
+            className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
+          >
+            Ver política
+          </button>
+
+          <button
+            onClick={rejectCookies}
+            className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
+          >
+            Rechazar
+          </button>
+
+          <button
+            onClick={acceptCookies}
+            className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white"
+          >
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 function MobileNav({ page, setPage }) {
   const items = [
     ["home", "Inicio"],
