@@ -149,24 +149,25 @@ const [detailBackPage, setDetailBackPage] = useState("home");
   location: "",
   zone: "",
 });
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedUserType, setSelectedUserType] = useState("seller");
-  const [investorProfile, setInvestorProfile] = useState(() => {
-    const [cookieConsent, setCookieConsent] = useState(() => {
+const [showFilters, setShowFilters] = useState(false);
+const [selectedUserType, setSelectedUserType] = useState("seller");
+
+const [cookieConsent, setCookieConsent] = useState(() => {
   return localStorage.getItem("cookieConsent");
 });
-    const saved = localStorage.getItem("investorProfile");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          budget: 250000,
-          roi: 15,
-          strategy: "Flip",
-          zones: "Valencia",
-          risk: "Medio",
-        };
-  });
 
+const [investorProfile, setInvestorProfile] = useState(() => {
+  const saved = localStorage.getItem("investorProfile");
+  return saved
+    ? JSON.parse(saved)
+    : {
+        budget: 250000,
+        roi: 15,
+        strategy: "Flip",
+        zones: "Valencia",
+        risk: "Medio",
+      };
+});
   const selected = listings.find((l) => l.id === selectedId) || listings[0];
 
   const scoredListings = useMemo(() => {
