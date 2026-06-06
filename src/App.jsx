@@ -3324,43 +3324,64 @@ function CookieBanner({ setCookieConsent, setPage }) {
     setCookieConsent("rejected");
   }
 
- return (
-  <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 md:items-center">
-    <div className="w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl">
-      <h3 className="text-xl font-black text-slate-900">
-        Configuración de cookies
-      </h3>
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 999999,
+        background: "rgba(15, 23, 42, 0.45)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "720px",
+          background: "white",
+          borderRadius: "24px",
+          padding: "24px",
+          boxShadow: "0 25px 70px rgba(0,0,0,0.25)",
+          border: "1px solid #e2e8f0",
+        }}
+      >
+        <h3 className="text-xl font-black text-slate-900">
+          Configuración de cookies
+        </h3>
 
-      <p className="mt-3 text-sm leading-6 text-slate-600">
-        Usamos cookies técnicas necesarias para que la plataforma funcione y,
-        con tu consentimiento, cookies de análisis para mejorar INVERZA.
-      </p>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
+          Usamos cookies técnicas necesarias para que la plataforma funcione y,
+          con tu consentimiento, cookies de análisis para mejorar INVERZA.
+        </p>
 
-      <div className="mt-5 flex flex-wrap gap-3">
-        <button
-          onClick={() => setPage("cookies")}
-          className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
-        >
-          Ver política
-        </button>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            onClick={() => setPage("cookies")}
+            className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
+          >
+            Ver política
+          </button>
 
-        <button
-          onClick={rejectCookies}
-          className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
-        >
-          Rechazar
-        </button>
+          <button
+            onClick={rejectCookies}
+            className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
+          >
+            Rechazar
+          </button>
 
-        <button
-          onClick={acceptCookies}
-          className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white"
-        >
-          Aceptar
-        </button>
+          <button
+            onClick={acceptCookies}
+            className="rounded-2xl bg-emerald-500 px-4 py-2 font-bold text-white"
+          >
+            Aceptar
+          </button>
+        </div>
       </div>
     </div>
-    </div>
-);
+  );
 }
 
 function MobileNav({ page, setPage }) {
