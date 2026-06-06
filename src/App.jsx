@@ -3305,19 +3305,35 @@ function TermsPage({ setPage }) {
 
 function LegalLayout({ title, children, setPage }) {
   return (
-    <div className="mx-auto max-w-4xl space-y-6 rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="mx-auto max-w-5xl space-y-6">
       <button
         onClick={() => setPage("home")}
-        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700"
+        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 shadow-sm hover:bg-emerald-50 hover:text-emerald-700"
       >
         ← Volver al inicio
       </button>
 
-      <h1 className="text-4xl font-black text-slate-900">{title}</h1>
+      <section className="overflow-hidden rounded-[34px] border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/50 to-sky-50 p-8 shadow-sm md:p-10">
+        <div className="inline-flex rounded-full border border-emerald-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-emerald-700">
+          Información legal
+        </div>
 
-      <div className="space-y-4 leading-8 text-slate-600">
-        {children}
-      </div>
+        <h1 className="mt-5 text-4xl font-black text-slate-900 md:text-5xl">
+          {title}
+        </h1>
+
+        <p className="mt-4 max-w-3xl text-slate-600">
+          Transparencia, protección de datos y condiciones de uso de INVERZA.
+        </p>
+      </section>
+
+      <section className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm md:p-10">
+        <div className="prose prose-slate max-w-none">
+          <div className="space-y-5 text-base leading-8 text-slate-700">
+            {children}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
