@@ -793,29 +793,7 @@ setPage("myListingDetail");
             </div>
           </div>
 
-          <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="text-sm font-bold uppercase tracking-[0.25em] text-emerald-600">
-              Accesos rápidos
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[
-                "Comprar",
-                "Alquilar",
-                "Invertir",
-                "Permutar",
-                "Publicar inmueble",
-                "Buscar inversor",
-              ].map((item) => (
-                <button
-                  key={item}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left font-semibold text-slate-800 transition hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+          
       </section>
     </div>
   );
