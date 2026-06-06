@@ -385,30 +385,39 @@ const [investorProfile, setInvestorProfile] = useState(() => {
 )}
       </main>
       <footer className="mt-16 border-t border-slate-200 bg-white px-6 py-8">
-  <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
-    <button onClick={() => setPage("privacy")}>
-      Política de privacidad
-    </button>
+  <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
+    <div>
+      <div className="font-black text-slate-900">INVERZA</div>
+      <div className="mt-1">© 2026 INVERZA. Todos los derechos reservados.</div>
+    </div>
 
-    <button onClick={() => setPage("cookies")}>
-      Política de cookies
-    </button>
+    <div className="flex flex-wrap gap-x-6 gap-y-3">
+      <button onClick={() => setPage("privacy")} className="hover:text-emerald-600">
+        Política de privacidad
+      </button>
 
-    <button onClick={() => setPage("legal")}>
-      Aviso legal
-    </button>
+      <button onClick={() => setPage("cookies")} className="hover:text-emerald-600">
+        Política de cookies
+      </button>
 
-    <button onClick={() => setPage("terms")}>
-      Términos y condiciones
-    </button>
-    <button
-  onClick={() => {
-    localStorage.removeItem("cookieConsent");
-    setCookieConsent("");
-  }}
->
-  Configurar cookies
-</button>
+      <button onClick={() => setPage("legal")} className="hover:text-emerald-600">
+        Aviso legal
+      </button>
+
+      <button onClick={() => setPage("terms")} className="hover:text-emerald-600">
+        Términos y condiciones
+      </button>
+
+      <button
+        onClick={() => {
+          localStorage.removeItem("cookieConsent");
+          setCookieConsent("");
+        }}
+        className="hover:text-emerald-600"
+      >
+        Configurar cookies
+      </button>
+    </div>
   </div>
 </footer>
 
@@ -3305,35 +3314,27 @@ function TermsPage({ setPage }) {
 
 function LegalLayout({ title, children, setPage }) {
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-4xl px-4 py-10">
       <button
         onClick={() => setPage("home")}
-        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-700 shadow-sm hover:bg-emerald-50 hover:text-emerald-700"
+        className="mb-8 text-sm font-bold text-emerald-600 hover:text-emerald-700"
       >
         ← Volver al inicio
       </button>
 
-      <section className="overflow-hidden rounded-[34px] border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/50 to-sky-50 p-8 shadow-sm md:p-10">
-        <div className="inline-flex rounded-full border border-emerald-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-emerald-700">
+      <div className="mb-8">
+        <div className="text-sm font-bold uppercase tracking-[0.25em] text-emerald-600">
           Información legal
         </div>
 
-        <h1 className="mt-5 text-4xl font-black text-slate-900 md:text-5xl">
+        <h1 className="mt-3 text-4xl font-black text-slate-900">
           {title}
         </h1>
+      </div>
 
-        <p className="mt-4 max-w-3xl text-slate-600">
-          Transparencia, protección de datos y condiciones de uso de INVERZA.
-        </p>
-      </section>
-
-      <section className="rounded-[30px] border border-slate-200 bg-white p-8 shadow-sm md:p-10">
-        <div className="prose prose-slate max-w-none">
-          <div className="space-y-5 text-base leading-8 text-slate-700">
-            {children}
-          </div>
-        </div>
-      </section>
+      <div className="space-y-6 text-base leading-8 text-slate-700">
+        {children}
+      </div>
     </div>
   );
 }
