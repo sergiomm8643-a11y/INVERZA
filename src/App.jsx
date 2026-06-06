@@ -153,7 +153,7 @@ const [showFilters, setShowFilters] = useState(false);
 const [selectedUserType, setSelectedUserType] = useState("seller");
 
 const [cookieConsent, setCookieConsent] = useState(() => {
-  return localStorage.getItem("cookieConsent");
+  return localStorage.getItem("cookieConsent") || "";
 });
 
 const [investorProfile, setInvestorProfile] = useState(() => {
@@ -405,7 +405,7 @@ const [investorProfile, setInvestorProfile] = useState(() => {
 </footer>
 
       <MobileNav page={page} setPage={setPage} />
-      {!cookieConsent && (
+      {cookieConsent === "" && (
   <CookieBanner setCookieConsent={setCookieConsent} setPage={setPage} />
 )}
     </div>
@@ -3328,36 +3328,39 @@ function CookieBanner({ setCookieConsent, setPage }) {
     <div
       style={{
         position: "fixed",
-        inset: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         zIndex: 999999,
-        background: "rgba(15, 23, 42, 0.45)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px",
+        background: "white",
+        borderTop: "1px solid #e2e8f0",
+        boxShadow: "0 -12px 40px rgba(15,23,42,0.18)",
+        padding: "18px",
       }}
     >
       <div
         style={{
-          width: "100%",
-          maxWidth: "720px",
-          background: "white",
-          borderRadius: "24px",
-          padding: "24px",
-          boxShadow: "0 25px 70px rgba(0,0,0,0.25)",
-          border: "1px solid #e2e8f0",
+          maxWidth: "1120px",
+          margin: "0 auto",
+          display: "flex",
+          gap: "16px",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
         }}
       >
-        <h3 className="text-xl font-black text-slate-900">
-          Configuración de cookies
-        </h3>
+        <div style={{ maxWidth: "680px" }}>
+          <div style={{ fontWeight: 900, fontSize: "18px", color: "#0f172a" }}>
+            Configuración de cookies
+          </div>
 
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          Usamos cookies técnicas necesarias para que la plataforma funcione y,
-          con tu consentimiento, cookies de análisis para mejorar INVERZA.
-        </p>
+          <div style={{ marginTop: "6px", fontSize: "14px", lineHeight: "22px", color: "#475569" }}>
+            Usamos cookies técnicas necesarias para que INVERZA funcione y,
+            con tu consentimiento, cookies de análisis para mejorar la plataforma.
+          </div>
+        </div>
 
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
           <button
             onClick={() => setPage("cookies")}
             className="rounded-2xl border border-slate-200 px-4 py-2 font-bold text-slate-700"
