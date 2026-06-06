@@ -401,6 +401,14 @@ const [investorProfile, setInvestorProfile] = useState(() => {
     <button onClick={() => setPage("terms")}>
       Términos y condiciones
     </button>
+    <button
+  onClick={() => {
+    localStorage.removeItem("cookieConsent");
+    setCookieConsent("");
+  }}
+>
+  Configurar cookies
+</button>
   </div>
 </footer>
 
